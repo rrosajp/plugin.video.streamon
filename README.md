@@ -1,4 +1,4 @@
-![streamon logo](https://github.com/xstreamon/plugin.video.streamon/icon.png?raw=true)
+![streamon logo](https://github.com/xstreamon/plugin.video.streamon/raw/master/icon.png)
 
 
 ## Willkommen bei streamon für Kodi!
