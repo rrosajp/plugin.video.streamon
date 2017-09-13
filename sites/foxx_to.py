@@ -21,7 +21,17 @@ URL_FILME = URL_MAIN + 'film'
 URL_SERIE = URL_MAIN + 'serie'
 URL_SEARCH = URL_MAIN + 'wp-json/dooplay/search/?keyword=%s&nonce='
 
-QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
+QUALITY_ENUM = {'240p': 0, '360p': 1, '480p': 2, '720p': 3, '1080p': 4}
+
+URL_GENRES_LIST = {'Action': 'genre/action', 'Comedy': 'genre/comedy/', 'Drama': 'genre/drama/',
+                   'History': 'genre/history/', 'Music': 'genre/music', 'Reality': 'genre/reality',
+                   'Sci-Fi': 'genre/science-fiction', 'War': 'genre/war', 'Adventure': 'genre/adventure',
+                   'Crime': 'genre/crime', 'Family': 'genre/family', 'Horror': 'genre/horror',
+                   'Mystery': 'genre/mystery', 'Fantasy': 'genre/fantasy', 'Romance': 'genre/romance',
+                   'Soap': 'genre/soap', 'War &#038; Politics': 'genre/war-politics', 'Animation': 'genre/animation',
+                   'Documentary': 'genre/documentary', 'Kids': 'genre/kids', 'News': 'genre/news',
+                   'Sci-Fi &#038; Fantasy': 'genre/sci-fi-fantasy', 'Thriller': 'genre/thriller',
+                   'Western': 'genre/western'}
 
 
 def load():
@@ -32,35 +42,17 @@ def load():
     params.setParam('sUrl', URL_SERIE)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_MAIN)
-    params.setParam('sValue', 'Kategorie')
-    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showValue'), params)
-    params.setParam('sValue', 'Erscheinungsjahr')
-    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showValue'), params)
+    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenresList'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 
-def showValue():
+def showGenresList():
     oGui = cGui()
-    params = ParameterHandler()
-    sHtmlContent = cRequestHandler(URL_MAIN).request()
-    sPattern = '<h2>%s</h2>.*?</nav></div>' % params.getValue('sValue')
-    isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
-
-    if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
-        return
-
-    sPattern = '<a[^>]*href="([^"]+).*?>([^<]+)'
-    isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
-
-    if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
-        return
-
-    for sUrl, sName in aResult:
-        params.setParam('sUrl', sUrl)
-        oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
+    for key in sorted(URL_GENRES_LIST):
+        params = ParameterHandler()
+        params.setParam('sUrl', (URL_MAIN + URL_GENRES_LIST[key]))
+        oGui.addFolder(cGuiElement(key, SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
 
@@ -75,7 +67,7 @@ def showEntries(entryUrl=False, sGui=False):
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -98,7 +90,7 @@ def showEntries(entryUrl=False, sGui=False):
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
     if not sGui:
-        sPattern = "span[^>]*class=[^>]*current[^>]*>.*?</span><a[^>]*href='([^']+)"
+        sPattern = '<link rel="next" href="([^"]+)'
         isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
         if isMatchNextPage:
             params.setParam('sUrl', sNextUrl)
@@ -119,7 +111,7 @@ def showSeasons():
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -147,14 +139,14 @@ def showEpisodes():
     isMatch, sContainer = cParser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<a[^>]*href="([^"]+)"[^>]*>\s*<img src="([^"]+).*?<div[^>]*class="numerando">[^-]*-\s*(\d+)\s*?</div>.*?<a[^>]*>([^<]*)</a>'
     isMatch, aResult = cParser.parse(sContainer, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -174,71 +166,67 @@ def showEpisodes():
 
 
 def showHosters():
-    params = ParameterHandler()
-    sUrl = params.getValue('entryUrl')
+    oParams = ParameterHandler()
+    sUrl = oParams.getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    pattern = '<source[^>]*src="([^"]+)'
-    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+    sPattern = '<iframe class="metaframe rptss" src="([^"]+)'  # url
+    aResult = cParser().parse(sHtmlContent, sPattern)
+    hosters = []
+    if aResult[1]:
+        for hUrl in aResult[1]:
+            if 'rapidvideo' in hUrl:
+                oRequest = cRequestHandler(hUrl, ignoreErrors=(True))
+                oRequest.addHeaderEntry('Referer', sUrl)
+                sHtmlContent = oRequest.request()
+                aResult = cParser.parse(sHtmlContent, '<a[^>]*href="([^"]+)">.*?">([^<]+)')
+                for sUrl, sQuality in aResult[1]:
+                    hoster = {'link': sUrl, 'name': 'Rapidvideo ' + sQuality, 'quality': QUALITY_ENUM[sQuality]}
+                    hosters.append(hoster)
 
-    if not isMatch:
-        pattern = "file: '([^']+)"
-        isMatch, aResult = cParser.parse(sHtmlContent, pattern)
+            if 'wp-embed.php' in hUrl:
+                oRequest = cRequestHandler(hUrl, ignoreErrors=(True))
+                oRequest.addHeaderEntry('Referer', sUrl)
+                sHtmlContent = oRequest.request()
+                aResult = cParser.parse(sHtmlContent, '{file: "([^"]+).*?label: "([^"]+)')
+                for sUrl, sQuality in aResult[1]:
+                    hoster = {'link': sUrl, 'name': 'Gvideo ' + sQuality, 'quality': QUALITY_ENUM[sQuality]}
+                    hosters.append(hoster)
 
-    if isMatch:
-        hosters = []
-        for sUrl in aResult:
-            hosters.append({'link': sUrl, 'name': sUrl})
+            if 'play' in hUrl:
+                oRequest = cRequestHandler(hUrl, ignoreErrors=(True))
+                oRequest.addHeaderEntry('Referer', sUrl)
+                sHtmlContent = oRequest.request()
+                isMatch, aResult = cParser.parse(sHtmlContent, '(eval\s*\(function.*?)</script>')
+                if isMatch:
+                    for packed in aResult:
+                        try:
+                            sHtmlContent += jsunpacker.unpack(packed)
+                        except:
+                            pass
+
+                    isMatch, aResult = cParser.parse(sHtmlContent, 'file":"([^"]+)","label":"([^"]+)"')
+                    print isMatch
+                    if not isMatch:
+                        logger.info("not aResult")
+                    for sUrl, sQuality in aResult:
+                        hoster = {'link': sUrl, 'name': 'Gvideo ' + sQuality}
+                        hosters.append(hoster)
+
         if hosters:
             hosters.append('getHosterUrl')
         return hosters
 
-    if not isMatch:
-        sPattern = '<iframe[^>]*class="[^"]*metaframe[^"]*"[^>]*src="([^"]+)"'
-        isMatch, streamUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
-
-    if not isMatch:
-        return []
-
-    oRequest = cRequestHandler(streamUrl)
-    oRequest.addHeaderEntry('Referer', sUrl)
-    sHtmlContent = oRequest.request()
-    isMatch, aResult = cParser.parse(sHtmlContent, '\(["]?(.*)["]?\)')
-
-    if isMatch:
-        for packed in aResult:
-            try:
-                packed = packed.replace('"', '').replace('+', '')
-                sHtmlContent += jsunpacker.unpack(base64.decodestring(packed))
-            except:
-                pass
-
-    isMatch, aResult = cParser.parse(sHtmlContent, 'sources:(\[{".*?}\])')
-    if not isMatch:
-        logger.info("not Json in aResult")
-        return []
-
-    hosters = []
-    for sJson in aResult:
-        for data in json.loads(sJson):
-            if 'file' not in data or 'label' not in data:
-                continue
-            sLabel = data['label'].encode('utf-8')
-            hoster = dict()
-            hoster['link'] = data['file'].replace('\\/', '/').replace('\/', '/')
-            if data['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
-                hoster['quality'] = QUALITY_ENUM[data['label'].encode('utf-8')[:-1]]
-            hoster['name'] = sLabel
-            hosters.append(hoster)
-
-    if hosters:
-        hosters.append('getHosterUrl')
-    return hosters
-
 
 def getHosterUrl(sUrl=False):
-    oParams = ParameterHandler()
-    if not sUrl: sUrl = oParams.getValue('url')
-    return [{'streamUrl': sUrl, 'resolved': False}]
+    if not sUrl: sUrl = ParameterHandler().getValue('url')
+    results = []
+    result = {'streamUrl': sUrl}
+    if 'rapidvideo' in sUrl:
+        result['resolved'] = False
+    else:
+        result['resolved'] = True
+    results.append(result)
+    return results
 
 
 def str_to_utf8(s):
@@ -270,7 +258,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
