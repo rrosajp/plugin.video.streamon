@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
+import json, re, sys
+from binascii import unhexlify, hexlify
+from resources.lib import cookie_helper, logger, pyaes
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
-import json
 
 SITE_IDENTIFIER = 'movietown_org'
 SITE_NAME = 'MovieTown'
@@ -52,7 +53,7 @@ def showGenre():
     type = params.getValue('type')
 
     if not type:
-        oGui.showError('streamon', 'Es wurde kein Token gefunden.')
+        oGui.showError('xStream', 'Es wurde kein Token gefunden.')
         return
 
     sUrl = URL_MAIN + ('series' if type == 'series' else 'movies')
@@ -62,7 +63,7 @@ def showGenre():
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -86,7 +87,7 @@ def showEntries(searchString='', sGui=False):
     hasToken, token = __getToken()
 
     if not hasToken:
-        if not sGui: oGui.showError('streamon', 'Es wurde kein Token gefunden.')
+        if not sGui: oGui.showError('xStream', 'Es wurde kein Token gefunden.')
         return
 
     iPage = int(params.getValue('page'))
@@ -97,13 +98,13 @@ def showEntries(searchString='', sGui=False):
     sJson = cRequestHandler(sUrl, ignoreErrors=(sGui is not False)).request()
 
     if not sJson:
-        if not sGui: oGui.showError('streamon', 'Fehler beim Laden der Daten.')
+        if not sGui: oGui.showError('xStream', 'Fehler beim Laden der Daten.')
         return
 
     aJson = json.loads(sJson)
 
     if not 'items' in aJson or len(aJson['items']) == 0:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     isTvShowfound = False
@@ -145,12 +146,12 @@ def showSeasons():
     sJson = cRequestHandler(sUrl).request()
 
     if not sJson:
-        oGui.showError('streamon', 'Fehler beim Laden der Daten.')
+        oGui.showError('xStream', 'Fehler beim Laden der Daten.')
 
     aJson = json.loads(sJson)
 
     if not 'items' in aJson or len(aJson['items']) == 0:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     tvshowItem = False
@@ -192,12 +193,12 @@ def showEpisodes():
     sJson = cRequestHandler(sUrl).request()
 
     if not sJson:
-        oGui.showError('streamon', 'Fehler beim Laden der Daten.')
+        oGui.showError('xStream', 'Fehler beim Laden der Daten.')
 
     aJson = json.loads(sJson)
 
     if not 'items' in aJson or len(aJson['items']) == 0:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
         return
 
     tvshowItem = False
@@ -274,7 +275,7 @@ def play(sUrl=False):
 
 
 def __getToken():
-    sHtmlContent = cRequestHandler(URL_MAIN, ignoreErrors=True).request()
+    sHtmlContent = __getContent(URL_MAIN)
     return cParser.parseSingleResult(sHtmlContent, "token\s*:\s*'([\w|\d]+)'")
 
 
@@ -289,3 +290,87 @@ def showSearch():
 def _search(oGui, sSearchText):
     if not sSearchText: return
     showEntries(sSearchText.strip(), oGui)
+
+
+''' BLAZINGFAST bypass '''
+
+
+def __getContent(sUrl):
+    request = cRequestHandler(sUrl, caching=False)
+    return __unprotect(request)
+
+
+def __unprotect(initialRequest):
+    parser = cParser()
+    content = initialRequest.request()
+    if 'Blazingfast.io' not in content:
+        return content
+    pattern = 'xhr\.open\("GET","([^,]+),'
+    match = parser.parse(content, pattern)
+    if not match[0]:
+        return False
+    urlParts = match[1][0].split('"')
+    sid = '1200'
+    url = '%s%s%s%s' % (URL_MAIN[:-1], urlParts[0], sid, urlParts[2])
+    request = cRequestHandler(url, caching=False)
+    request.addHeaderEntry('Referer', initialRequest.getRequestUri())
+    content = request.request()
+    if not check(content):
+        return content  # even if its false its probably not the right content, we'll see
+    cookie = getCookieString(content)
+    if not cookie:
+        return False
+    initialRequest.caching = False
+    name, value = cookie.split(';')[0].split('=')
+    cookieData = dict((k.strip(), v.strip()) for k, v in (item.split("=") for item in cookie.split(";")))
+    cookie = cookie_helper.create_cookie(name, value, domain=cookieData['domain'], expires=sys.maxint, discard=False)
+    initialRequest.setCookie(cookie)
+    content = initialRequest.request()
+    return content
+
+
+COOKIE_NAME = 'BLAZINGFAST-WEB-PROTECT'
+
+
+def check(content):
+    """
+    returns True if there seems to be a protection
+    """
+    return COOKIE_NAME in content
+
+
+# not very robust but lazieness...
+def getCookieString(content):
+    vars = re.findall('toNumbers\("([^"]+)"', content)
+    if not vars:
+        logger.info('vars not found')
+        return False
+    value = _decrypt(vars[2], vars[0], vars[1])
+    if not value:
+        logger.info('value decryption failed')
+        return False
+    pattern = '"%s=".*?";([^"]+)"' % COOKIE_NAME
+    cookieMeta = re.findall(pattern, content)
+    if not cookieMeta:
+        logger.info('cookie meta not found')
+    cookie = "%s=%s;%s" % (COOKIE_NAME, value, cookieMeta[0])
+    return cookie
+
+
+def _decrypt(msg, key, iv):
+    msg = unhexlify(msg)
+    key = unhexlify(key)
+    iv = unhexlify(iv)
+    if len(iv) != 16:
+        logger.info("iv length is" + str(len(iv)) + " must be 16.")
+        return False
+    decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(key, iv))
+    plain_text = decrypter.feed(msg)
+    plain_text += decrypter.feed()
+    f = hexlify(plain_text)
+    return f
+
+    if 'User-Agent=' not in sUrl:
+        delimiter = '&' if '|' in sUrl else '|'
+        sUrl += delimiter + "User-Agent=" + oRequest.getHeaderEntry('User-Agent')
+    return sUrl
