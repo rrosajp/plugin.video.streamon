@@ -82,7 +82,7 @@ def showEntries(entryUrl=False, sGui=False):
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     if not isMatch: 
-        if not sGui: oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -126,7 +126,7 @@ def showSeasons():
         isMatch, aResult = parser.parse(strContainer, sPattern)
 
     if not isMatch: 
-        oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -156,7 +156,7 @@ def showEpisodes():
     isMatch, aResult = parser.parse(sHtmlContent, sPattern)
 
     if not isMatch: 
-        oGui.showInfo('xStream','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     result, imdb = parser.parseSingleResult(sHtmlContent,'IMDB\s?=\s?\'(\d+)')
