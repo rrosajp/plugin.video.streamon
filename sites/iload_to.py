@@ -61,7 +61,7 @@ def showGenre():
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     for sUrl, sName in aResult:
@@ -86,7 +86,7 @@ def showEntries(entryUrl=False, sGui=False, isInternalSearch=False):
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        if isInternalSearch: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if isInternalSearch: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     isTvshow = True if "serien" in entryUrl.lower() else False
@@ -134,7 +134,7 @@ def showSeasons():
     isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -169,7 +169,7 @@ def showEpisodes():
     isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)

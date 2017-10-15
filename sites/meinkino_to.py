@@ -102,7 +102,7 @@ def showEntries(entryUrl = False, sGui = False):
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
         return
 
     total = len (aResult)

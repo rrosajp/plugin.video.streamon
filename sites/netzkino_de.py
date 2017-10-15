@@ -64,13 +64,13 @@ def showEntries(entryUrl=False, sGui=False):
     sJson = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
 
     if not sJson:
-        if not sGui: oGui.showError('streamon', 'Fehler beim Laden der Daten.')
+        if not sGui: oGui.showError('steamon', 'Fehler beim Laden der Daten.')
         return
 
     aJson = json.loads(sJson)
 
     if not 'posts' in aJson or len(aJson['posts']) == 0:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aJson['posts'])

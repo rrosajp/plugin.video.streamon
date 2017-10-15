@@ -43,13 +43,13 @@ def showGenre():
     isMatch, sHtmlContainer = parser.parseSingleResult(sHtmlContent, '<select[^>]*class="sorter_genre"[^>]*>.*?</select>')
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     isMatch, aResult = parser.parse(sHtmlContainer, "<option[^>]*value='([^']*)'[^>]*>([^<]+)</option>")
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     for sValue, sTitle in aResult:
@@ -77,7 +77,7 @@ def showEntries(entryUrl=False, sGui=False):
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)

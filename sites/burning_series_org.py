@@ -39,7 +39,7 @@ def showSeries():
     if sChar: sChar = sChar.lower()
     series = _getJsonContent("series")
     if not series:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
     total = len(series)
     for serie in series:
@@ -85,7 +85,7 @@ def showGenres():
     sGenre = oParams.getValue('genreID')
     genres = _getJsonContent("series:genre")
     if not genres:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
     total = len(genres)
     for genre in sorted(genres):
@@ -132,9 +132,9 @@ def _getJsonContent(urlPart, ignoreErrors = False):
             logger.info("API-Error: %s" % aJson)
             if not ignoreErrors:
                 if 'unauthorized' in aJson and aJson['unauthorized'] == 'timestamp':
-                    xbmcgui.Dialog().ok('streamon', 'Fehler bei API-Abfrage:','','System-Zeit ist nicht korrekt.')
+                    xbmcgui.Dialog().ok('steamon', 'Fehler bei API-Abfrage:','','System-Zeit ist nicht korrekt.')
                 else:
-                    xbmcgui.Dialog().ok('streamon', 'Fehler bei API-Abfrage:','',str(aJson))
+                    xbmcgui.Dialog().ok('steamon', 'Fehler bei API-Abfrage:','',str(aJson))
             return []
         else:
             return aJson
@@ -147,7 +147,7 @@ def _search(sGui, sSearchText):
     params = ParameterHandler()
     series = _getJsonContent("series", ignoreErrors = (sGui is not False))
     if not series:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
     total = len(series)
     sSearchText = sSearchText.lower()
@@ -172,7 +172,7 @@ def showSeasons():
     data = _getJsonContent("series/%s/1" % seriesId)
 
     if not data:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     rangeStart = not int(data["series"]["movies"])
@@ -212,7 +212,7 @@ def showEpisodes():
     data = _getJsonContent("series/%s/%s" % (seriesId, sSeason))
 
     if not data:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(data['epi'])
@@ -242,7 +242,7 @@ def showCinemaMovies():
     data = _getJsonContent("series/%s/0" % (seriesId))
 
     if not data:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(data['epi'])
@@ -278,7 +278,7 @@ def randomSerie():
     oParams = ParameterHandler()
     series = _getJsonContent('series')
     if not series:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
     serie = random.choice(series)
     sTitle = serie["series"].encode('utf-8')
@@ -299,7 +299,7 @@ def randomSeason():
 
     data = _getJsonContent("series/%s/1" % oParams.getValue('seriesID'))
     if not data:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     seasons = int(data["series"]["seasons"])+1
@@ -335,7 +335,7 @@ def randomEpisode():
 
     season = _getJsonContent("series/%s/1" % series['id'])
     if not season:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
     randomEpisodeNr = (random.choice(season['epi']))['epi']
     randomEpisode = filter(lambda person: person['epi'] == randomEpisodeNr, season['epi'])[0]

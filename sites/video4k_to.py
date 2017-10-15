@@ -62,7 +62,7 @@ def showEntries(sGui = False, sSearchText = None):
     isMatch, aResult = cParser().parse(sHtmlContent, '#tt(\d*).*?">(.*?)<')
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
         return
 
     threads = []

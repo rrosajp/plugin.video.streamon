@@ -44,7 +44,7 @@ def showGenre():
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     for sName, sUrl in aResult:
@@ -69,7 +69,7 @@ def showEntries(Value=False, Page=False, sGui=False):
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -147,7 +147,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)

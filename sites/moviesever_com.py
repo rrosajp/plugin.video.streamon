@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
-import re, base64
+import json
+import re
+
 from resources.lib import logger
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
@@ -15,7 +17,10 @@ SITE_ICON = 'moviesever.png'
 URL_MAIN = 'http://moviesever.com/'
 URL_FILME = URL_MAIN + 'filme/'
 URL_SERIEN = URL_MAIN + 'serien/'
-URL_SEARCH = URL_MAIN + 'wp-json/dooplay/search/?keyword=%s&nonce='
+URL_HOSTER = 'http://play.seriesever.net/me/moviesever.php'
+URL_SEARCH = URL_MAIN + '?s=%s'
+
+QUALITY_ENUM = {'240': 0, '360': 1, '480': 2, '720': 3, '1080': 4}
 
 
 def load():
@@ -26,10 +31,11 @@ def load():
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('sUrl', URL_SERIEN)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sGenreId', 'genres')
-    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenres'), params)
-    params.setParam('sGenreId', 'releases')
-    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showGenres'), params)
+#    params.setParam('sUrl', URL_MAIN)
+#    params.setParam('sGenreId', 'Genres')
+#    oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showGenres'), params)
+#    params.setParam('sGenreId', 'Alle Jahre')
+#    oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showGenres'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
@@ -38,17 +44,18 @@ def showGenres():
     oGui = cGui()
     params = ParameterHandler()
     sHtmlContent = cRequestHandler(URL_MAIN).request()
-    sPattern = '<nav[^>]*class="%s">.*?</ul></nav>' % params.getValue('sGenreId')
+    sPattern = '<h2>%s</h2>.*?<div[^>]*class' % params.getValue('sGenreId')
     isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
-    sPattern2 = '<a[^>]*href="([^"]+)">([^<]+)'
-    isMatch, aResult = cParser.parse(sHtmlContainer, sPattern2)
+
+    sPattern = '<a[^>]*href="([^"]+)">([^<]+)'
+    isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     for sUrl, sName in aResult:
@@ -56,7 +63,7 @@ def showGenres():
            sUrl = URL_MAIN + sUrl
         params.setParam('sUrl', sUrl)
         oGui.addFolder(cGuiElement(sName, SITE_IDENTIFIER, 'showEntries'), params)
-    oGui.setEndOfDirectory()
+        oGui.setEndOfDirectory()
 
 
 def showEntries(entryUrl=False, sGui=False):
@@ -70,7 +77,7 @@ def showEntries(entryUrl=False, sGui=False):
     isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -94,7 +101,7 @@ def showEntries(entryUrl=False, sGui=False):
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
     if not sGui:
-        sPattern = '<div[^>]*class="resppages"><a[^>]*href="([^"]+)">'
+        sPattern = "span[^>]*class=[^>]*current[^>]*>.*?</span><a[^>]*href='([^']+)"
         isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
         if isMatchNextPage:
             if sNextUrl and not sNextUrl.startswith('http'):
@@ -117,7 +124,7 @@ def showSeasons():
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -145,14 +152,14 @@ def showEpisodes():
     isMatch, sContainer = cParser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<a[^>]*href="([^"]+)"[^>]*>\s*<img src="([^"]+).*?<div[^>]*class="numerando">[^-]*-\s*(\d+)\s*?</div>.*?<a[^>]*>([^<]*)</a>'
     isMatch, aResult = cParser.parse(sContainer, pattern)
 
     if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -184,81 +191,89 @@ def showHosters():
 
     hosters = []
     for sUrl in aResult:
-        sUrl = __decodeHash(sUrl)
-        try:
-            hname = re.compile('^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n]+)', flags=re.I | re.M).findall(sUrl)[0]
-        except:
-            pass
-        hoster = {}
-        hoster['name'] = hname
-        hoster['link'] = sUrl
-        hosters.append(hoster)
+        oRequest = cRequestHandler(URL_HOSTER)
+        oRequest.addParameters("link", sUrl)
+        oRequest.setRequestType(1)
+        sHtmlContent = oRequest.request()
+        isMatch, aResult = cParser.parse(sHtmlContent, '(\[{".*?}\])')
+        for sJson in aResult:
+            for entry in json.loads(sJson):
+                if 'link' not in entry or 'label' not in entry:
+                    continue
+                try:
+                    hname = re.compile('^(?:https?:\/\/)?(?:[^@\n]+@)?([^:\/\n]+)', flags=re.I | re.M).findall(entry['link'])[0]
+                except:
+                    pass
+
+                sLabel = hname + ' ' + entry['label'].encode('utf-8')
+                hoster = dict()
+                hoster['link'] = entry['link']
+                if entry['label'].encode('utf-8')[:-1] in QUALITY_ENUM:
+                    hoster['quality'] = QUALITY_ENUM[entry['label'].encode('utf-8')[:-1]]
+                hoster['name'] = sLabel
+                hosters.append(hoster)
+
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
 
 
-def __decodeHash(sHash):
-    sHash = sHash.replace("!BeF", "R")
-    sHash = sHash.replace("@jkp", "Ax")
-    try:
-        return base64.b64decode(sHash)
-    except:
-        logger.error("Invalid Base64: %s" % sHash)
-
-
 def getHosterUrl(sUrl=False):
     oParams = ParameterHandler()
     if not sUrl: sUrl = oParams.getValue('url')
-    return [{'streamUrl': sUrl, 'resolved': False}]
+    return [{'streamUrl': sUrl, 'resolved': True}]
 
 
 def showSearchEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
-    oRequest = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
-    sHtmlContent = oRequest.request()
-
-    sPattern = '"title":"([^"]+)","url":"([^"]+)","img":"([^"]+).*?date":"([^"]+)'
-    isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
+    sHtmlContent = cRequestHandler(entryUrl).request()
+    sPattern = '<div[^>]*class="search-page">.*?<footer[^>]*class="main">'
+    isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        return
+
+    sPattern = '<img src="([^"]+).*?<div class="title"><a href="([^"]+)">([^<]+)'
+    isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
+
+    if not isMatch:
+        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
-    for sName, sUrl, sThumbnail, sYear in aResult:
-        sThumbnail = sThumbnail.replace('\\/', '/').replace('\/', '/')
-        sUrl = sUrl.replace('\\/', '/').replace('\/', '/')
+    for sThumbnail, sUrl, sName in aResult:
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
         if sThumbnail and not sThumbnail.startswith('http'):
             sThumbnail = URL_MAIN + sThumbnail
-        isTvshow = True if "serie" in sUrl else False
-        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
-        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
-        oGuiElement.setYear(sYear)
-        sUrl = cUtil.quotePlus(sUrl)
+        if sUrl and not sUrl.startswith('http'):
+           sUrl = URL_MAIN + sUrl
         params.setParam('entryUrl', sUrl)
-        params.setParam('sName', sName)
-        params.setParam('sThumbnail', sThumbnail)
-        oGui.addFolder(oGuiElement, params, isTvshow, total)
+        oGui.addFolder(oGuiElement, params, False, total)
+    if not sGui:
+        sPattern = "span[^>]*class=[^>]*current[^>]*>.*?</span><a[^>]*href='([^']+)"
+        isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
+        if isMatchNextPage:
+            if sNextUrl and not sNextUrl.startswith('http'):
+                sNextUrl = URL_MAIN + sNextUrl
+            params.setParam('sUrl', sNextUrl)
+            oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
+        oGui.setView('tvshows' if 'serien' in sUrl else 'movies')
+        oGui.setEndOfDirectory()
 
 
 def showSearch():
     oGui = cGui()
-    sHtmlContent = cRequestHandler(URL_MAIN).request()
-    try:
-        nonce = re.findall('nonce":"([^"]+)', sHtmlContent)[0]
-    except:
-        nonce = '033ba26c1b'
     sSearchText = oGui.showKeyBoard()
     if not sSearchText: return
-    _search(False, sSearchText, nonce)
+    _search(False, sSearchText)
     oGui.setEndOfDirectory()
 
 
-def _search(oGui, sSearchText, nonce):
+def _search(oGui, sSearchText):
     if not sSearchText: return
-    showSearchEntries(URL_SEARCH % sSearchText.strip() + nonce, oGui)
+    showSearchEntries(URL_SEARCH % sSearchText.strip(), oGui)
