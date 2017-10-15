@@ -62,7 +62,7 @@ def showSeries():# Danke Lynx187
     pattern = '<h3>([^<]+)</h3>\s*<p>\|.+?</p>'
     aResult = cParser().parse(sHtmlContent, pattern)
     if not aResult[0]:
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
     total = len(aResult[1])
     for name in aResult[1]:
@@ -84,7 +84,7 @@ def showSeasons():# Danke Lynx187
     pattern =  'href="([^"]+)">([^<]+)<'
     aResult = cParser().parse(aResult[1][0], pattern)
     if not aResult[0]:
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
     total = len(aResult[1])
     for link, name in aResult[1]:
@@ -108,7 +108,7 @@ def showEntries(entryUrl = False, sGui = False):
     aResult = parser.parse(sHtmlContent, pattern)
     
     if not aResult[0]:
-        if not sGui: oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
     
     episodePattern = '(.+?)\sStaffel\s([\d]+)\sEpisode\s([\d]+)'

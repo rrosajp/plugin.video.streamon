@@ -108,7 +108,7 @@ def showEntries(entryUrl=False, sGui=False):
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -142,7 +142,7 @@ def showAllSeasons():
     aResult = cParser().parse(sHtmlContent, "var[ ]subcats[ ]=[ ](.*?);")  # json for hoster
 
     if not aResult[0] or not aResult[1][0]:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     data = json.loads(aResult[1][0])

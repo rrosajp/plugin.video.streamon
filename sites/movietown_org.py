@@ -53,7 +53,7 @@ def showGenre():
     type = params.getValue('type')
 
     if not type:
-        oGui.showError('steamon', 'Es wurde kein Token gefunden.')
+        oGui.showError('streamon', 'Es wurde kein Token gefunden.')
         return
 
     sUrl = URL_MAIN + ('series' if type == 'series' else 'movies')
@@ -63,7 +63,7 @@ def showGenre():
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -87,7 +87,7 @@ def showEntries(searchString='', sGui=False):
     hasToken, token = __getToken()
 
     if not hasToken:
-        if not sGui: oGui.showError('steamon', 'Es wurde kein Token gefunden.')
+        if not sGui: oGui.showError('streamon', 'Es wurde kein Token gefunden.')
         return
 
     iPage = int(params.getValue('page'))
@@ -98,13 +98,13 @@ def showEntries(searchString='', sGui=False):
     sJson = cRequestHandler(sUrl, ignoreErrors=(sGui is not False)).request()
 
     if not sJson:
-        if not sGui: oGui.showError('steamon', 'Fehler beim Laden der Daten.')
+        if not sGui: oGui.showError('streamon', 'Fehler beim Laden der Daten.')
         return
 
     aJson = json.loads(sJson)
 
     if not 'items' in aJson or len(aJson['items']) == 0:
-        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     isTvShowfound = False
@@ -146,12 +146,12 @@ def showSeasons():
     sJson = cRequestHandler(sUrl).request()
 
     if not sJson:
-        oGui.showError('steamon', 'Fehler beim Laden der Daten.')
+        oGui.showError('streamon', 'Fehler beim Laden der Daten.')
 
     aJson = json.loads(sJson)
 
     if not 'items' in aJson or len(aJson['items']) == 0:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     tvshowItem = False
@@ -193,12 +193,12 @@ def showEpisodes():
     sJson = cRequestHandler(sUrl).request()
 
     if not sJson:
-        oGui.showError('steamon', 'Fehler beim Laden der Daten.')
+        oGui.showError('streamon', 'Fehler beim Laden der Daten.')
 
     aJson = json.loads(sJson)
 
     if not 'items' in aJson or len(aJson['items']) == 0:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     tvshowItem = False

@@ -50,7 +50,7 @@ def showValueList():
         isMatch, aResult = cParser.parse(strContainer, sPattern)
 
     if not isMatch:
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     for sUrl, sName in aResult:
@@ -70,7 +70,7 @@ def showEntries(entryUrl = False, sGui = False):
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     total = len (aResult)

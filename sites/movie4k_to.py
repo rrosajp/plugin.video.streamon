@@ -278,7 +278,7 @@ def showGenre():
         isMatch, aResult = cParser.parse(sHtmlContent, sPattern, ignoreCase=True)
 
         if not isMatch:
-            oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+            oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
             return
 
         for sUrl, sTitle, sCount in aResult:

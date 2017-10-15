@@ -55,7 +55,7 @@ def showMovies(sURL = False, sGui = False, sSearchText = ""):
         pattern = False
         aResult = False
     else:
-        if not sGui: oGui.showInfo('steamon', eMode)
+        if not sGui: oGui.showInfo('streamon', eMode)
         return
 
     if pattern:
@@ -65,7 +65,7 @@ def showMovies(sURL = False, sGui = False, sSearchText = ""):
         aResult = oParser.parse(sHtmlContent, pattern)
 
         if not aResult[0]:
-            if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+            if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
             return
 
         total = len(aResult[1])
@@ -145,7 +145,7 @@ def getEpisodes():
     bResult = oParser.parse(sHtmlContent, "older-link'.*?href='([^']+)'")
 
     if not aResult[0]:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult[1]) 
@@ -197,7 +197,7 @@ def getHosters():
           hosters.append('getHosterUrl')
        return hosters
     else:
-       oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+       oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
 
 def getHosterUrl(sUrl=False):
     if not sUrl:

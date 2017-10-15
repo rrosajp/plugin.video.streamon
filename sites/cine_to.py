@@ -86,7 +86,7 @@ def searchRequest(dictFilter = False, sGui = False):
     oResponse = _getJSonResponse(URL_SEARCH, dictFilter, (sGui is not False))
 
     if 'entries' not in oResponse or len(oResponse['entries']) == 0:
-        if not sGui: oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     sLanguage = _getPrefLanguage()

@@ -44,13 +44,13 @@ def showLinkList():
     isMatch, sContainer = parser.parseSingleResult(sHtmlContent,'<ul[^>]*class="%s"[^>]*>(.*?)<\/ul>' % sCont)
 
     if not isMatch:
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     isMatch, aResult = parser.parse(sContainer, '<li>\s*<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>\s*<\/li>')
 
     if not isMatch: 
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     for sEntryUrl, sName in aResult:
@@ -71,7 +71,7 @@ def showAllSeries(entryUrl = False, sGui = False, sSearchText = False):
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     if not isMatch: 
-        if not sGui: oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -106,7 +106,7 @@ def showEntries(entryUrl = False, sGui = False):
     isMatch, aResult = parser.parse(sHtmlContent, pattern)
 
     if not isMatch: 
-        if not sGui: oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -138,14 +138,14 @@ def showSeasons():
     isMatch, sMainContent = parser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch: 
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<a[^>]*href="([^"]*)"[^>]*title="([^"]*)"[^>]*>(.*?)<\/a>.*?'
     isMatch, aResult = parser.parse(sMainContent, pattern)
 
     if not isMatch: 
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     isMatchDesc, sDesc = parser.parseSingleResult(sHtmlContent, '<p[^>]*data-full-description="(.*?)"[^>]*>')
@@ -194,14 +194,14 @@ def showEpisodes():
     isMatch, sMainContent = parser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch: 
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<tr[^>]*data-episode-season-id="(\d+)">.*?<td[^>]*class="seasonEpisodeTitle"[^>]*>.*?<a[^>]*href="([^"]*)"[^>]*>.*?(?:<strong>(.*?)</strong>.*?)?(?:<span>(.*?)</span>.*?)?<'
     isMatch, aResult = parser.parse(sMainContent, pattern)
 
     if not isMatch: 
-        oGui.showInfo('steamon','Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon','Es wurde kein Eintrag gefunden')
         return
 
     isMatchDesc, sDesc = parser.parseSingleResult(sHtmlContent, '<p[^>]*data-full-description="(.*?)"[^>]*>')

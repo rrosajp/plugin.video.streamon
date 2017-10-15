@@ -155,7 +155,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     # Funktion verlassen falls keine Daten ermittelt werden konnten
     if not isMatch:
-        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     # Gefundenen Bereiche zusammenführen (tritt z.b bei der Suche auf)
@@ -165,7 +165,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     # Funktion verlassen falls keine Daten ermittelt werden konnten
     if not sMainContent:
-        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     # URL ermitteln
@@ -190,7 +190,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     # Kein Einträge gefunden? => Raus hier
     if not isMatch:
-        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     # Listengröße ermitteln

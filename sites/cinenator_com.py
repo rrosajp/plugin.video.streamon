@@ -42,14 +42,14 @@ def showValue():
     isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     sPattern = '<a[^>]*href="([^"]+)".*?>([^"]+)</a>'
     isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     for sUrl, sName in aResult:
@@ -68,7 +68,7 @@ def showEntries(entryUrl=False, sGui=False):
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -107,7 +107,7 @@ def showSeasons():
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -134,14 +134,14 @@ def showEpisodes():
     isMatch, sContainer = cParser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<a[^>]*href="([^"]+)"[^>]*>\s*(?:<img[^>]*src="([^"]+)?).*?<div[^>]*class="numerando">[^-]*-\s*(\d+)\s*?</div>.*?<a[^>]*>([^<]*)</a>'
     isMatch, aResult = cParser.parse(sContainer, pattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
@@ -192,14 +192,14 @@ def showSearchEntries(entryUrl=False, sGui=False):
     isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     sPattern = '<img[^>]*src="([^"]+).*?<a[^>]*href="([^"]+)">([^<]+)</a>.*?(?:<span[^>]*class="year">([^<]+)?).*?<p>([^<]+)'
     isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
 
     if not isMatch:
-        oGui.showInfo('steamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
