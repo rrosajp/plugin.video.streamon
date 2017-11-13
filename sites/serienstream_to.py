@@ -8,6 +8,7 @@ from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
+from resources.lib.config import cConfig
 
 SITE_IDENTIFIER = 'serienstream_to'
 SITE_NAME = 'SerienStream'
@@ -15,6 +16,7 @@ SITE_ICON = 'serienstream.png'
 
 URL_MAIN = 'http://serienstream.to'
 URL_SERIES = URL_MAIN + '/serien'
+URL_LOGIN = URL_MAIN + "/login"
 
 def load():
     logger.info("Load %s" % SITE_NAME)
@@ -175,6 +177,20 @@ def showSeasons():
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
 
+#logs us in
+def prepareWatch():
+    username = cConfig().getSetting('serienstream.user')
+    password = cConfig().getSetting('serienstream.pass')
+
+    if (username == '' or password == ''): oGui.showInfo("Logindaten wurden vergessen!")
+
+    oRequestHandler = cRequestHandler(URL_LOGIN, caching=False)
+    oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
+    oRequestHandler.addResponse('email', username)
+    oRequestHandler.addResponse('password', password)
+    oRequestHandler.request()
+
+
 def showEpisodes():
     oGui = cGui()
     params = ParameterHandler()
@@ -262,6 +278,8 @@ def showHosters():
 
 def getHosterUrl(sUrl = False):
     if not sUrl: sUrl = ParameterHandler().getValue('url')
+
+    prepareWatch()
 
     if not sUrl.startswith('http'):
         refUrl = ParameterHandler().getValue('sUrl')
