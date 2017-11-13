@@ -103,10 +103,10 @@ def showEntries(entryUrl=False, sGui=False):
         oGui.addFolder(oGuiElement, params, isTvshow, total)
 
     if not sGui:
-        sPattern = '<link[^>]*rel="next"[^>]*href="([^"]+)'
+        sPattern = "<li[^>]*class='pagination-next'><a[^>]*href='([^']+)'>"
         isMatchNextPage, sNextUrl = cParser.parseSingleResult(sHtmlContent, sPattern)
         if isMatchNextPage:
-            params.setParam('sUrl', sNextUrl)
+            params.setParam('sUrl', URL_MAIN + sNextUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
 
         oGui.setView('tvshows' if 'serien' in entryUrl else 'movies')
