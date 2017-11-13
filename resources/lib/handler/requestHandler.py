@@ -18,13 +18,15 @@ from resources.lib.config import cConfig
 
 
 class cRequestHandler:
-    def __init__(self, sUrl, caching=True, ignoreErrors=False, compression=True):
+    def __init__(self, sUrl, caching=True, ignoreErrors=False, compression=True, formIndex=0):
         self.__sUrl = sUrl
         self.__sRealUrl = ''
         self.__cType = 0
         self.__aParameters = {}
+        self.__aResponses = {}
         self.__headerEntries = {}
         self.__cachePath = ''
+        self.__formIndex = formIndex
         self._cookiePath = ''
         self.ignoreDiscard(False)
         self.ignoreExpired(False)
@@ -64,6 +66,12 @@ class cRequestHandler:
             self.__aParameters[key] = value
         else:
             self.__aParameters[key] = urllib.quote(str(value))
+
+    def addResponse(self, key, value):
+        self.__aResponses[key] = value
+
+    def setFormIndex(self, index):
+        self.__formIndex = index
 
     def getResponseHeader(self):
         return self.__sResponseHeader
@@ -146,6 +154,31 @@ class cRequestHandler:
             logger.error("HTTPException " + str(e) + " Url: " + self.__sUrl)
             return ''
 
+        self.__sResponseHeader = oResponse.info()
+        # handle gzipped content
+        if self.__sResponseHeader.get('Content-Encoding') == 'gzip':
+            import gzip
+            import StringIO
+            data = StringIO.StringIO(oResponse.read())
+            gzipper = gzip.GzipFile(fileobj=data, mode='rb')
+            try:
+                oResponse.set_data(gzipper.read())
+            except:
+                oResponse.set_data(gzipper.extrabuf)
+        
+        if self.__aResponses:
+            forms = mechanize.ParseResponse(oResponse, backwards_compat=False)
+            form = forms[self.__formIndex]
+            for field in self.__aResponses:
+                #logger.info("Field: " + str(not field in form))
+                try: form.find_control(name=field)
+                except:
+                    form.new_control("text", field, {"value":""})
+                    form.fixup()
+                form[field] = self.__aResponses[field]
+            o = mechanize.build_opener(mechanize.HTTPCookieProcessor(cookieJar))
+            oResponse = o.open(form.click(), timeout=self.requestTimeout)
+
         sContent = oResponse.read()
 
         checked_response = self.__check_protection(sContent, user_agent, cookieJar)
@@ -156,17 +189,6 @@ class cRequestHandler:
         cookie_helper.check_cookies(cookieJar)
         cookieJar.save(ignore_discard=self.__bIgnoreDiscard, ignore_expires=self.__bIgnoreExpired)
 
-        self.__sResponseHeader = oResponse.info()
-        # handle gzipped content
-        if self.__sResponseHeader.get('Content-Encoding') == 'gzip':
-            import gzip
-            import StringIO
-            data = StringIO.StringIO(sContent)
-            gzipper = gzip.GzipFile(fileobj=data, mode='rb')
-            try:
-                sContent = gzipper.read()
-            except:
-                sContent = gzipper.extrabuf
 
         if (self.__bRemoveNewLines == True):
             sContent = sContent.replace("\n", "")
