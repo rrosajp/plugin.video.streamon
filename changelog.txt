@@ -1,6 +1,37 @@
 Big THX to all contributors!
 For more information check out the commit history at GitHub.
 
+streamon 3.4.3   
+================================================================================
+- Anmeldedaten für Serienstream.to eingefügt (Danke an WizzardMaker)
+- Fix hdfilme_tv (Danke an vka)
+
+streamon 3.4.2
+================================================================================
+- Fix Kinodogs (Next Page)
+- Fix Cinenator (Erscheinungsjahr)
+- Fix kinox
+- Fix hdfilme_tv
+
+streamon 3.4.1
+================================================================================
+-  Fix Dokustream, 
+-  Fix Kinox 
+-  Fix Moviesever
+-  Fix Foxx
+
+streamon 3.4.0
+================================================================================
+- Add and Update animes-stream24_tv
+- Fix Movietown BLAZINGFAST Problem 
+- [Streamit] Fix Thumbnail & Genre usw
+- hdfilme.tv fix hoster 
+- Create Cinenator 
+- Create dokustream_org
+- Create NetzKino 
+- Fix search and fix single hoster and remove unnecessary code 
+- Fix DDL.me
+- fix [tata.to]
 
 streamon v3.3.0 - 18.01.2017
 ================================================================================
