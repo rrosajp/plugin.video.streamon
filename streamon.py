@@ -126,11 +126,12 @@ def get_metahandler():
         return False
 
 def parseUrl():
-    import urlparse
-    netloc = [urlparse.urlparse(sys.argv[0]).netloc, '']
-    if xbmc.getInfoLabel('Container.PluginName') not in netloc:
-        sys.exit()
-        return
+# remove fix for osmosis
+#    import urlparse
+#    netloc = [urlparse.urlparse(sys.argv[0]).netloc, '']
+#    if xbmc.getInfoLabel('Container.PluginName') not in netloc:
+#        sys.exit()
+#        return
 	
     params = ParameterHandler()
     logger.info(params.getAllParameters())
