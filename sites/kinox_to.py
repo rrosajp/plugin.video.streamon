@@ -763,7 +763,7 @@ def showHosters(sHtmlContent='', sTitle=False):
         for aEntry in aResult[1]:
             sHoster = aEntry[1]
             # check for additional mirrors
-            sPattern = '<b>Mirror</b>: [0-9]+/([0-9]+)<br/>'
+            sPattern = '<b>Mirror</b>: [0-9]+/([0-9]+)'
             oParser = cParser()
             aResult = oParser.parse(aEntry[2], sPattern)
             mirrors = 1
@@ -821,7 +821,7 @@ def getHosterUrlandPlay(sUrl=False):
         # pattern for stream url (single part)
         isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<a\shref=\\\\".*?(https?:.*?)\\\\"')
         if not isMatch:
-            isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe\ssrc=\\\\".*?(https?:.*?)\\\\"')
+            isMatch, sStreamUrl = cParser.parseSingleResult(sHtmlContent, '<iframe src=[^"]*"([^"]+)')
         if isMatch:
             results.append({'streamUrl': sStreamUrl.replace('\\/', '/'), 'resolved': False})
     return results

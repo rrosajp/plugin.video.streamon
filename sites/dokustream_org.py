@@ -43,7 +43,7 @@ def showValue(entryUrl=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    sPattern = 'class="entry-title">.*?<footer class="entry-meta">'
+    sPattern = '<div[^>]*class="p-first-letter">.*?><!--[^>]*end .p-first-letter'
     isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
 
     if not isMatch:
@@ -68,8 +68,8 @@ def showEntries(entryUrl=False, sGui=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
 
-    sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = '<h2[^>]*class="entry-title">[^>]*<a[^>]*href="([^"]+)"[^>]*rel="bookmark">([^<]+).*?<img[^>]*src="([^"]+)'
+    sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
+    pattern = '<div[^>]*class="clear">.*?<a[^>]*href="([^"]+)">.*?<img[^>]*src="([^"]+)".*?<h2[^>]*class="entry-title">([^<]+)'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
@@ -77,7 +77,7 @@ def showEntries(entryUrl=False, sGui=False):
         return
 
     total = len(aResult)
-    for sUrl, sName, sThumbnail in aResult:
+    for sUrl, sThumbnail, sName in aResult:
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'getHosterUrl')
         oGuiElement.setThumbnail(sThumbnail)
         params.setParam('entryUrl', sUrl)
@@ -96,7 +96,7 @@ def getHosterUrl(sUrl=False):
     if not sUrl: sUrl = ParameterHandler().getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
     try:
-        hLink = re.compile('<div[^>]*class="entry-content">.*?src="([^"]+)', flags=re.I | re.M).findall(sHtmlContent)[0]
+        hLink = re.compile('<iframe.*?src="([^"]+)', flags=re.I | re.M).findall(sHtmlContent)[0]
         return [{'streamUrl': hLink, 'resolved': False}]
     except:
         pass

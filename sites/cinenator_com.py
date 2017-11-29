@@ -28,7 +28,7 @@ def load():
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('Value', 'Genres')
     oGui.addFolder(cGuiElement('Genres', SITE_IDENTIFIER, 'showValue'), params)
-    params.setParam('Value', 'Veröffentlichungs Jahr')
+    params.setParam('Value', 'Release Year')
     oGui.addFolder(cGuiElement('Erscheinungsjahr', SITE_IDENTIFIER, 'showValue'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
