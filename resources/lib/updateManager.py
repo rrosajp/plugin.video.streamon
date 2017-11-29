@@ -19,8 +19,8 @@ REMOTE_URLRESOLVER_COMMITS = "https://api.github.com/repos/jsergio123/script.mod
 REMOTE_URLRESOLVER_DOWNLOADS = "https://github.com/jsergio123/script.module.urlresolver/archive/master.zip"
 
 ## streamon
-REMOTE_streamon_COMMITS = "https://api.github.com/repos/lastship/plugin.video.streamon/commits/nightly"
-REMOTE_streamon_NIGHTLY = "https://github.com/lastship/plugin.video.streamon/archive/nightly.zip"
+REMOTE_streamon_COMMITS = "https://api.github.com/repos/xstreamon/plugin.video.streamon/commits/master"
+REMOTE_streamon_NIGHTLY = "https://github.com/xstreamon/plugin.video.streamon/archive/master.zip"
 
 ## Filename of the update File.
 LOCAL_NIGHTLY_VERSION = os.path.join(profilePath, "nightly_commit_sha")
