@@ -15,8 +15,8 @@ streamon_DIRNAME = os.path.basename(ROOT_DIR)
 
 
 ## URLRESOLVER
-REMOTE_URLRESOLVER_COMMITS = "https://api.github.com/repos/jsergio123/script.module.urlresolver/commits/master"
-REMOTE_URLRESOLVER_DOWNLOADS = "https://github.com/jsergio123/script.module.urlresolver/archive/master.zip"
+REMOTE_URLRESOLVER_COMMITS = "https://api.github.com/repos/tvaddonsco/script.module.urlresolver/commits/master"
+REMOTE_URLRESOLVER_DOWNLOADS = "https://github.com/tvaddonsco/script.module.urlresolver/archive/master.zip"
 
 ## streamon
 REMOTE_streamon_COMMITS = "https://api.github.com/repos/xstreamon/plugin.video.streamon/commits/master"
