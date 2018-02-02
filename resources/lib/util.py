@@ -1,7 +1,6 @@
-import re
-import urllib
-import htmlentitydefs
-
+# -*- coding: utf-8 -*-
+import htmlentitydefs, re, hashlib, urllib
+from resources.lib import pyaes
 
 class cUtil:
     @staticmethod
@@ -15,10 +14,10 @@ class cUtil:
 
         iMinutes = int(iSeconds / 60)
         iSeconds = iSeconds - (iMinutes * 60)
-        if (iSeconds < 10):
+        if iSeconds < 10:
             iSeconds = '0' + str(iSeconds)
 
-        if (iMinutes < 10):
+        if iMinutes < 10:
             iMinutes = '0' + str(iMinutes)
 
         return str(iMinutes) + ':' + str(iSeconds)
@@ -66,18 +65,76 @@ class cUtil:
             return text
 
         if isinstance(text, str):
-            try: text = text.decode('utf-8')
+            try:
+                text = text.decode('utf-8')
             except:
-                try: text = text.decode('utf-8', 'ignore')
-                except: pass
+                try:
+                    text = text.decode('utf-8', 'ignore')
+                except:
+                    pass
 
         return re.sub("&(\w+;|#x?\d+;?)", fixup, text.strip())
 
     @staticmethod
+    def str_to_utf8(s):
+        if '\\u00c4' in s:
+            s = s.replace("\\u00c4", "Ä")
+        if '\\u00e4' in s:
+            s = s.replace("\\u00e4", "ä")
+        if '\\u00d6' in s:
+            s = s.replace("\\u00d6", "Ö")
+        if '\\u00f6' in s:
+            s = s.replace("\\u00f6", "ö")
+        if '\\u00dc' in s:
+            s = s.replace("\\u00dc", "Ü")
+        if '\\u00fc' in s:
+            s = s.replace("\\u00fc", "ü")
+        if '\\u00df' in s:
+            s = s.replace("\\u00df", "ß")
+        return s
+
+    @staticmethod
     def cleanse_text(text):
         if text is None: text = ''
+        text = cUtil.str_to_utf8(text)
         text = cUtil.unescape(text)
         text = cUtil.removeHtmlTags(text)
         if isinstance(text, unicode):
             text = text.encode('utf-8')
         return text
+
+    @staticmethod
+    def evp_decode(cipher_text, passphrase, salt=None):
+        if not salt:
+            salt = cipher_text[8:16]
+            cipher_text = cipher_text[16:]
+        data = cUtil.evpKDF(passphrase, salt)
+        decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(data['key'], data['iv']))
+        plain_text = decrypter.feed(cipher_text)
+        plain_text += decrypter.feed()
+        return plain_text
+
+    @staticmethod
+    def evpKDF(passwd, salt, key_size=8, iv_size=4):
+        target_key_size = key_size + iv_size
+        derived_bytes = ""
+        number_of_derived_words = 0
+        block = None
+        hasher = hashlib.new("md5")
+        while number_of_derived_words < target_key_size:
+            if block is not None:
+                hasher.update(block)
+            hasher.update(passwd)
+            hasher.update(salt)
+            block = hasher.digest()
+            hasher = hashlib.new("md5")
+            for _i in range(1, 1):
+                hasher.update(block)
+                block = hasher.digest()
+                hasher = hashlib.new("md5")
+            derived_bytes += block[0: min(len(block), (target_key_size - number_of_derived_words) * 4)]
+            number_of_derived_words += len(block) / 4
+        return {
+            "key": derived_bytes[0: key_size * 4],
+            "iv": derived_bytes[key_size * 4:]
+        }

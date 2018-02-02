@@ -2,7 +2,7 @@
   <category label="30020">
     <setting label="30030" type="lsep" />
     <setting default="true" id="githubUpdatestreamon" label="30010" type="bool" />
-    <setting default="true" id="githubUpdateUrlResolver" label="30015" type="bool" />
+    <setting default="false" id="githubUpdateUrlResolver" label="30015" type="bool" />
     <setting type="sep" />
     <setting label="30031" type="lsep" />
     <setting default="true" id="GlobalSearchPosition" label="30011" type="bool" />
@@ -20,16 +20,16 @@
     <setting label="30034" type="lsep" />
     <setting default="dialog" id="hosterSelect" label="30005" type="labelenum" values="Dialog|Auto|List" />
     <setting default="100" id="maxHoster" label="30007" option="int" range="10,5,100" type="slider" />
-    <setting default="true" enable="!eq(-2,1)" id="presortHoster" label="30009" type="bool" />
+    <setting default="false" enable="!eq(-2,1)" id="presortHoster" label="30009" type="bool" />
     <setting type="sep" />
     <setting label="30035" type="lsep" />
     <setting default="600" id="cacheTime" label="30006" option="int" range="0,60,1800" type="slider" />
     <setting default="30" id="requestTimeout" label="30014" option="int" range="10,5,60" type="slider" />
   </category> 
   <category label="30021">
-	<setting label="1Kino" type="lsep" />
-    <setting default="true" id="plugin_1kino_in" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_1kino_in" label="30052" type="bool" />
+	<setting label="Animes-Stream24" type="lsep" />
+    <setting default="true" id="plugin_animes-stream24_tv" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_animes-stream24_tv" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="BurningSeries" type="lsep" />
     <setting default="true" id="plugin_burning_series_org" label="30050" type="bool" />
@@ -39,14 +39,18 @@
     <setting default="true" id="plugin_cine_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_cine_to" label="30052" type="bool" />
     <setting type="sep" />
+    <setting label="Cinenator" type="lsep" />
+    <setting default="true" id="plugin_cinenator_com" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_cinenator_com" label="30052" type="bool" />
+    <setting type="sep" />
     <setting label="DirectDownLoad" type="lsep" />
     <setting default="true" id="plugin_ddl_me" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_ddl_me" label="30052" type="bool" />
     <setting default="de.ddl.me" enable="!eq(-2,false)" id="ddl_me-domain" label="30051" type="labelenum" values="de.ddl.me|en.ddl.me" />
     <setting type="sep" />
-    <setting label="FilmeStreamz" type="lsep" />
-    <setting default="true" id="plugin_filme-streamz_com" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_filme-streamz_com" label="30052" type="bool" />
+    <setting label="Dokustream" type="lsep" />
+    <setting default="true" id="plugin_dokustream_org" label="30050" type="bool" />
+    <setting default="false" enable="!eq(-1,false)" id="global_search_dokustream_org" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="FilmPalast" type="lsep" />
     <setting default="true" id="plugin_filmpalast_to" label="30050" type="bool" />
@@ -56,9 +60,9 @@
     <setting default="true" id="plugin_flimmerstube_com" label="30050" type="bool" />
     <setting default="false" enable="!eq(-1,false)" id="global_search_flimmerstube_com" label="30052" type="bool" />
     <setting type="sep" />
-    <setting label="Goldstream" type="lsep" />
-    <setting default="true" id="plugin_goldstream_org" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_goldstream_org" label="30052" type="bool" />
+    <setting label="Foxx" type="lsep" />
+    <setting default="true" id="plugin_foxx_to" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_foxx_to" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="HDfilme" type="lsep" />
     <setting default="true" id="plugin_hdfilme_tv" label="30050" type="bool" />
@@ -68,9 +72,9 @@
     <setting default="true" id="plugin_iload_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_iload_to" label="30052" type="bool" />
     <setting type="sep" />
-    <setting label="KinoStreamz" type="lsep" />
-    <setting default="true" id="plugin_kino-streamz_com" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_kino-streamz_com" label="30052" type="bool" />
+    <setting label="Kindertube" type="lsep" />
+    <setting default="true" id="plugin_kindertube" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_kindertube" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="KinoDogs" type="lsep" />
     <setting default="true" id="plugin_kinodogs_to" label="30050" type="bool" />
@@ -81,18 +85,10 @@
     <setting default="true" enable="!eq(-1,false)" id="global_search_kinox_to" label="30052" type="bool" />
     <setting default="kinox.to" enable="!eq(-2,false)" id="kinox_to-domain" label="30051" type="labelenum" values="kinox.to|kinox.me|kinox.tv|kinox.ag|kinox.am|kinox.nu|kinox.pe|kinox.sg" />
     <setting type="sep" />
-    <setting label="MeinKino" type="lsep" />
-    <setting default="true" id="plugin_meinkino_to" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_meinkino_to" label="30052" type="bool" />
-    <setting type="sep" />
     <setting label="Movie4k" type="lsep" />
     <setting default="true" id="plugin_movie4k_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_movie4k_to" label="30052" type="bool" />
     <setting default="movie4k.tv" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.tv|movie.to|movie4k.me|movie4k.org|movie4k.pe|movie4k.am" />
-    <setting type="sep" />
-    <setting label="MoviesEver" type="lsep" />
-    <setting default="true" id="plugin_moviesever_com" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_moviesever_com" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="MovieTown" type="lsep" />
     <setting default="true" id="plugin_movietown_org" label="30050" type="bool" />
@@ -102,21 +98,25 @@
     <setting default="true" id="plugin_mykino_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_mykino_to" label="30052" type="bool" />
     <setting type="sep" />
-    <setting label="RapidStream" type="lsep" />
-    <setting default="true" id="plugin_rapidstream_to" label="30050" type="bool" />
-    <setting default="false" enable="!eq(-1,false)" id="global_search_rapidstream_to" label="30052" type="bool" />
+    <setting label="NetzKino" type="lsep" />
+    <setting default="true" id="plugin_netzkino_de" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_netzkino_de" label="30052" type="bool" />
+    <setting type="sep" />
+    <setting label="OnlineFilme" type="lsep" />
+    <setting default="true" id="plugin_onlinefilme_to" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_onlinefilme_to" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="SerienStream" type="lsep" />
     <setting default="true" id="plugin_serienstream_to" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_serienstream_to" label="30052" type="bool" /> 
-    <setting default="" id="serienstream.user" label="30083" type="text" />
-    <setting default="" id="serienstream.pass" label="30084" option="hidden" type="text" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_serienstream_to" label="30052" type="bool" />
+    <setting default="" id="serienstream.user" label="E-Mail" type="text" />
+    <setting default="" id="serienstream.pass" label="Passwort" option="hidden" type="text" />
     <setting type="sep" />
     <setting label="SeriesEver" type="lsep" />
     <setting default="true" id="plugin_seriesever_net" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_seriesever_net" label="30052" type="bool" />
-    <setting default="" id="seriesever.user" label="Username" type="text" />
-    <setting default="" id="seriesever.pass" label="Passwort" option="hidden" type="text" />
+    <setting default="" id="seriesever.user" label="30083" type="text" />
+    <setting default="" id="seriesever.pass" label="30084" option="hidden" type="text" />
     <setting type="sep" />
     <setting label="StreamDream" type="lsep" />
     <setting default="true" id="plugin_streamdream_ws" label="30050" type="bool" />
@@ -125,18 +125,6 @@
     <setting label="StreamIt" type="lsep" />
     <setting default="true" id="plugin_streamit_ws" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_streamit_ws" label="30052" type="bool" />
-    <setting type="sep" />
-    <setting label="StreamKisteTV" type="lsep" />
-    <setting default="true" id="plugin_streamkiste_tv" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_streamkiste_tv" label="30052" type="bool" />
-    <setting type="sep" />
-    <setting label="SzeneStreams" type="lsep" />
-    <setting default="true" id="plugin_szene-streams_com" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_szene-streams_com" label="30052" type="bool" />
-    <setting type="sep" />
-    <setting label="Tata" type="lsep" />
-    <setting default="true" id="plugin_tata_to" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_tata_to" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="Video2k" type="lsep" />
     <setting default="true" id="plugin_video2k_is" label="30050" type="bool" />
@@ -149,6 +137,10 @@
     <setting label="View4U" type="lsep" />
     <setting default="true" id="plugin_view4u_co" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_view4u_co" label="30052" type="bool" />
+    <setting type="sep" />
+    <setting label="WatchBox" type="lsep" />
+    <setting default="true" id="plugin_watchbox_de" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_watchbox_de" label="30052" type="bool" />
     <setting type="sep" />
 </category>
     <category label="30022">

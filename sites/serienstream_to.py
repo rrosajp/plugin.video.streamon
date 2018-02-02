@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import re
-
 from resources.lib import logger
 from resources.lib.cCFScrape import cCFScrape
 from resources.lib.gui.gui import cGui
@@ -13,17 +12,17 @@ from resources.lib.config import cConfig
 SITE_IDENTIFIER = 'serienstream_to'
 SITE_NAME = 'SerienStream'
 SITE_ICON = 'serienstream.png'
+SITE_SETTINGS = '<setting id="serienstream.user" type="text" label="30083" default="serienstream@trash-mail.com" /><setting id="serienstream.pass" type="text" option="hidden" label="30084" default="test1234" />'
 
 URL_MAIN = 'http://serienstream.to'
 URL_SERIES = URL_MAIN + '/serien'
 URL_LOGIN = URL_MAIN + "/login"
 
+
 def load():
     logger.info("Load %s" % SITE_NAME)
-
     oGui = cGui()
     params = ParameterHandler()
-
     params.setParam('sUrl', URL_SERIES)
     oGui.addFolder(cGuiElement('Alle Serien', SITE_IDENTIFIER, 'showAllSeries'), params)
     params.setParam('sUrl', URL_MAIN)
@@ -177,18 +176,7 @@ def showSeasons():
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
 
-#logs us in
-def prepareWatch():
-    username = cConfig().getSetting('serienstream.user')
-    password = cConfig().getSetting('serienstream.pass')
 
-    if (username == '' or password == ''): oGui.showInfo("Logindaten wurden vergessen!")
-
-    oRequestHandler = cRequestHandler(URL_LOGIN, caching=False)
-    oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
-    oRequestHandler.addResponse('email', username)
-    oRequestHandler.addResponse('password', password)
-    oRequestHandler.request()
 
 
 def showEpisodes():
@@ -277,14 +265,20 @@ def showHosters():
     return hosters
 
 def getHosterUrl(sUrl = False):
-    if not sUrl: sUrl = ParameterHandler().getValue('url')
+    username = cConfig().getSetting('serienstream.user')
+    password = cConfig().getSetting('serienstream.pass')
 
-    prepareWatch()
+    oRequestHandler = cRequestHandler(URL_LOGIN, caching=False)
+    oRequestHandler.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
+    oRequestHandler.addResponse('email', username)
+    oRequestHandler.addResponse('password', password)
+    oRequestHandler.request()
 
     if not sUrl.startswith('http'):
         refUrl = ParameterHandler().getValue('sUrl')
         oRequest = cRequestHandler(URL_MAIN + sUrl, caching=False)
         oRequest.addHeaderEntry("Referer", refUrl)
+        oRequest.addHeaderEntry('X-Requested-With', 'XMLHttpRequest')
         oRequest.request()
         sUrl = oRequest.getRealUrl()
 

@@ -80,19 +80,24 @@ def showTop100Menu():
 def showGenreList():
     oGui = cGui()
     params = ParameterHandler()
-
     sHtmlContent = cRequestHandler(params.getValue('sUrl')).request()
-    pattern = '<a[^>]*href="([^"]*)".*?'  # url
-    pattern += '<i[^>]*class="fa fa-dot-circle-o".*?i>(.*?)</a>.*?'  # title
-    aResult = cParser().parse(sHtmlContent, pattern)
+    sPattern = '<i[^>]*class="genre.*?<span>Genre</span>'
+    isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, sPattern)
 
-    if not aResult[0]:
+    if not isMatch:
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
-    total = len(aResult[1])
-    for sUrl, sTitle in aResult[1]:
+    sPattern = '<a[^>]*href="([^"]+)".*?i>([^<]+)'
+    isMatch, aResult = cParser.parse(sHtmlContainer, sPattern)
+
+    if not isMatch:
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        return
+
+    for sUrl, sTitle in aResult:
         params.setParam('sUrl', URL_MAIN + sUrl)
-        oGui.addFolder(cGuiElement(sTitle.strip(), SITE_IDENTIFIER, 'showEntries'), params, iTotal=total)
+        oGui.addFolder(cGuiElement(sTitle.strip(), SITE_IDENTIFIER, 'showEntries'), params)
     oGui.setEndOfDirectory()
 
 

@@ -14,7 +14,7 @@ SITE_ICON = 'streamdream.png'
 URL_MAIN = 'http://streamdream.ws/'
 
 EPISODE_URL = URL_MAIN + 'episodeholen.php'
-HOSTER_URL = URL_MAIN + 'episodeholen2.php'
+HOSTER_URL = URL_MAIN + 'episodeholen3.php'
 SEARCH_URL = URL_MAIN + 'searchy.php?ser=%s'
 
 QUALITY_ENUM = {'SD': 1, 'HD': 4}

@@ -128,7 +128,7 @@ class cRequestHandler:
         try:
             oResponse = opener.open(oRequest, timeout=self.requestTimeout)
         except mechanize.HTTPError, e:
-            if e.code == 503 and e.headers.get("Server") == 'cloudflare-nginx':
+            if e.code == 503 and e.headers.get("Server") == 'cloudflare-nginx' or 'cloudflare':
                 html = e.read()
                 oResponse = self.__check_protection(html, user_agent, cookieJar)
                 if not oResponse:
