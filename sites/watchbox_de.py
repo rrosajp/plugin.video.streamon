@@ -8,8 +8,9 @@ from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
 
 SITE_IDENTIFIER = 'watchbox_de'
-SITE_NAME = 'WatchBox'
-SITE_ICON = 'watchbox.png'
+SITE_NAME = 'WatchBox.de'
+SITE_ICON = 'watchbox_de.png'
+SITE_GLOBAL_SEARCH = False
 
 URL_MAIN = 'https://www.watchbox.de'
 URL_NEUE_FILME = URL_MAIN + '/filme/neu/'
@@ -25,16 +26,16 @@ def load():
     params.setParam('sUrl', URL_NEUE_FILME)
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('valueType', 'filme')
-    oGui.addFolder(cGuiElement('Film Genre', SITE_IDENTIFIER, 'showGenresList'), params)
+    oGui.addFolder(cGuiElement('Film Genre', SITE_IDENTIFIER, 'showGenres'), params)
     params.setParam('sUrl', URL_SERIES)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
     params.setParam('valueType', 'serien')
-    oGui.addFolder(cGuiElement('Serien Genre', SITE_IDENTIFIER, 'showGenresList'), params)
+    oGui.addFolder(cGuiElement('Serien Genre', SITE_IDENTIFIER, 'showGenres'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
 
 
-def showGenresList():
+def showGenres():
     oGui = cGui()
     params = ParameterHandler()
     valueType = params.getValue('valueType')
@@ -69,10 +70,11 @@ def showEntries(entryUrl=False, sGui=False):
             isTvshow = True if "serien" in sUrl else False
             if sThumbnail and sThumbnail.startswith('/'):
                 sThumbnail = 'http:' + sThumbnail
-                Year = re.compile('(\d{4})', flags=re.I | re.M).findall(sYear)[0]
+            Year = re.compile('(\d{4})', flags=re.I | re.M).findall(sYear)[0]
             oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'getHosterUrl')
             oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
             oGuiElement.setThumbnail(sThumbnail)
+            oGuiElement.setFanart(sThumbnail)
             oGuiElement.setYear(Year)
             oGuiElement.setDescription(sDesc)
             params.setParam('sThumbnail', sThumbnail)
@@ -184,6 +186,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
         oGuiElement.setYear(sYear)
         sThumbnail = 'https://aiswatchbox-a.akamaihd.net/watchbox/format/' + sId + '_dvdcover/bild.jpg'
         oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setFanart(sThumbnail)
         oGuiElement.setDescription(sDesc)
         if isTvshow:
             params.setParam('entryUrl', URL_MAIN + '/serien/' + sUrl + '-' + sId)
@@ -195,11 +198,8 @@ def showSearchEntries(entryUrl=False, sGui=False):
 
 
 def getHosterUrl():
-    try:
-        params = ParameterHandler()
-        sUrl = params.getValue('entryUrl')
-        sHtmlContent = cRequestHandler(sUrl).request()
-        hLink = re.compile("hls:[^>]'([^']+)',", flags=re.I | re.M).findall(sHtmlContent)[0]
+    sUrl = ParameterHandler().getValue('entryUrl')
+    sHtmlContent = cRequestHandler(sUrl).request()
+    isMatch, hLink = cParser().parseSingleResult(sHtmlContent, "hls:[^>]'([^']+)',")
+    if isMatch:
         return [{'streamUrl': hLink, 'resolved': True}]
-    except:
-        pass
