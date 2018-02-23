@@ -66,14 +66,14 @@ def showValue():
     isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<option[^>]value="([^"]+)">.*?([^<]+)'
     isMatch, aResult = cParser.parse(sHtmlContainer, pattern)
 
     if not isMatch:
-        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     for sName, sUrl in aResult:
@@ -93,7 +93,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     if not isMatch:
         if not sGui:
-            oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+            oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     pattern = '<a[^>]href="([^"]+)"><img[^>]src="([^"]+)"><div><span>([^<]+)'
@@ -101,7 +101,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     if not isMatch:
         if not sGui:
-            oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+            oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)
