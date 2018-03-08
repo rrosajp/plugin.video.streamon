@@ -11,7 +11,7 @@ SITE_IDENTIFIER = 'streamdream_ws'
 SITE_NAME = 'StreamDream'
 SITE_ICON = 'streamdream.png'
 
-URL_MAIN = 'http://streamdream.ws/'
+URL_MAIN = 'https://streamdream.ws/'
 
 EPISODE_URL = URL_MAIN + 'episodeholen.php'
 HOSTER_URL = URL_MAIN + 'episodeholen3.php'
@@ -237,11 +237,12 @@ def getHosters(sUrl=False):
 
     for sUrl, sQuali in aResult:
         hoster = {}
-        hoster['link'] = sUrl
-        hoster['name'] = str(urlparse(sUrl).netloc).title()
-        hoster['displayedName'] = '%s [%s]' % (hoster['name'], sQuali.upper())
-        hoster['quality'] = QUALITY_ENUM[sQuali.upper()]
-        hosters.append(hoster)
+        if not 'nurhdfilm' in sUrl.lower():
+            hoster['link'] = sUrl
+            hoster['name'] = str(urlparse(sUrl).netloc).title()
+            hoster['displayedName'] = '%s [%s]' % (hoster['name'], sQuali.upper())
+            hoster['quality'] = QUALITY_ENUM[sQuali.upper()]
+            hosters.append(hoster)
 
     if hosters:
         hosters.append('getHosterUrl')
