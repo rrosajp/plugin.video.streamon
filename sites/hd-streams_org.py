@@ -129,8 +129,8 @@ def showHosterserie():
 def showHosters():
     sUrl = ParameterHandler().getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = "loadStream[^>]'([^']+)', '([^']+)', '([^']+).*?"
-    sPattern += '>.*?>([^"]+)</v-btn>'
+    sPattern = "recaptcha[^>]'([^']+)', '([^']+)', '([^']+).*?"
+    sPattern += '">.*?>([^<]+)'
     isMatch, aResult = cParser().parse(sHtmlContent, sPattern)
     pattern = '<meta name="csrf-token" content="([^"]+)">'
     token = re.compile(pattern, flags=re.I | re.M).findall(sHtmlContent)[0]
@@ -147,7 +147,7 @@ def showHosters():
 def getHosterUrl(sUrl=False):
     if 'nxload' in sUrl:
         sHtmlContent = cRequestHandler(sUrl).request()
-        sPattern = 'sources.*?"([^"]+)'
+	sPattern = '<source[^>]src="([^"]+)'
         isMatch, sUrl = cParser.parse(sHtmlContent, sPattern)
         return [{'streamUrl': sUrl[0], 'resolved': True}]
     else:

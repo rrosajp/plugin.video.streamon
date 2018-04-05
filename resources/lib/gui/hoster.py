@@ -5,10 +5,7 @@ from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.player import cPlayer
 from resources.lib import logger
-import xbmc, xbmcgui
-import logger
-import xbmcplugin
-
+import xbmc, xbmcgui, xbmcplugin
 
 class cHosterGui:
     SITE_NAME = 'cHosterGui'
@@ -62,13 +59,8 @@ class cHosterGui:
 
         # resolver response
         if link is not False:
-            data = {}
-            data['title'] = fileName
-            data['season'] = params.getValue('season')
-            data['episode'] = params.getValue('episode')
-            data['showTitle'] = params.getValue('TVShowTitle')
-            data['thumb'] = params.getValue('thumb')
-            data['link'] = link
+	    data = {'title': fileName, 'season': params.getValue('season'), 'episode': params.getValue('episode'),
+		    'showTitle': params.getValue('TVShowTitle'), 'thumb': params.getValue('thumb'), 'link': link}
             return data
 
         return False
@@ -94,6 +86,9 @@ class cHosterGui:
             info['Episode'] = data['episode']
             info['Season'] = data['season']
             info['TVShowTitle'] = data['showTitle']
+	if 'foxx' in data['link']:
+	    list_item.setContentLookup(False)
+	    list_item.setMimeType('video/mp4')
         list_item.setInfo(type="Video", infoLabels=info)
         list_item.setProperty('IsPlayable', 'true')
 
@@ -150,7 +145,6 @@ class cHosterGui:
         params = ParameterHandler()
         if not sMediaUrl:
             sMediaUrl = params.getValue('sMediaUrl')
-        sFileName = params.getValue('sFileName')
         if self.dialog:
             self.dialog.close()
         logger.info('call send to JDownloader: ' + sMediaUrl)
@@ -161,7 +155,6 @@ class cHosterGui:
         params = ParameterHandler()
         if not sMediaUrl:
             sMediaUrl = params.getValue('sMediaUrl')
-        sFileName = params.getValue('sFileName')
         if self.dialog:
             self.dialog.close()
         logger.info('call send to JDownloader2: ' + sMediaUrl)
@@ -233,8 +226,7 @@ class cHosterGui:
             return
         # if result is not a list, make in one
         if not type(siteResult) is list:
-            temp = []
-            temp.append(siteResult)
+	    temp = [siteResult]
             siteResult = temp
         # field "name" marks hosters
         if 'name' in siteResult[0]:
@@ -275,8 +267,7 @@ class cHosterGui:
 
             # if result is not a list, make in one
             if not type(siteResult) is list:
-                temp = []
-                temp.append(siteResult)
+		temp = [siteResult]
                 siteResult = temp
 
         # choose part
@@ -321,8 +312,7 @@ class cHosterGui:
             return False
         # if result is not a list, make in one
         if not type(siteResult) is list:
-            temp = []
-            temp.append(siteResult)
+	    temp = [siteResult]
             siteResult = temp
         # field "name" marks hosters
         if 'name' in siteResult[0]:

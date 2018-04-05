@@ -43,10 +43,6 @@
     <setting default="true" id="plugin_cinematrix_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_cinematrix_to" label="30052" type="bool" />
     <setting type="sep" />
-    <setting label="Cinenator" type="lsep" />
-    <setting default="true" id="plugin_cinenator_com" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_cinenator_com" label="30052" type="bool" />
-    <setting type="sep" />
     <setting label="DirectDownLoad" type="lsep" />
     <setting default="true" id="plugin_ddl_me" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_ddl_me" label="30052" type="bool" />
@@ -96,6 +92,10 @@
     <setting default="true" id="plugin_kinostern_com" label="30050" type="bool" />
     <setting default="false" enable="!eq(-1,false)" id="global_search_kinostern_com" label="30052" type="bool" />
     <setting type="sep" />
+    <setting label="KINOX.ONE" type="lsep" />
+    <setting default="true" id="plugin_kinox_one" label="30050" type="bool" />
+    <setting default="false" enable="!eq(-1,false)" id="global_search_kinox_one" label="30052" type="bool" />
+    <setting type="sep" />
     <setting label="KinoX" type="lsep" />
     <setting default="true" id="plugin_kinox_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_kinox_to" label="30052" type="bool" />
@@ -105,10 +105,18 @@
     <setting default="true" id="plugin_movie2k_ag" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_movie2k_ag" label="30052" type="bool" />
     <setting type="sep" />
+    <setting label="Movie2k SH" type="lsep" />
+    <setting default="true" id="plugin_movie2k_sh" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_movie2k_sh" label="30052" type="bool" />
+    <setting type="sep" />
     <setting label="Movie4k" type="lsep" />
     <setting default="true" id="plugin_movie4k_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_movie4k_to" label="30052" type="bool" />
     <setting default="movie4k.tv" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.tv|movie.to|movie4k.me|movie4k.org|movie4k.pe|movie4k.am" />
+    <setting type="sep" />
+    <setting label="Movies.GG" type="lsep" />
+    <setting default="true" id="plugin_movies_gg" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_movies_gg" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="MovieTown" type="lsep" />
     <setting default="true" id="plugin_movietown_org" label="30050" type="bool" />
@@ -153,6 +161,10 @@
     <setting label="SzeneStreams" type="lsep" />
     <setting default="true" id="plugin_szene-streamz_com" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_szene-streamz_com" label="30052" type="bool" />
+    <setting type="sep" />
+    <setting label="TMovie" type="lsep" />
+    <setting default="true" id="plugin_tmovie_to" label="30050" type="bool" />
+    <setting default="true" enable="!eq(-1,false)" id="global_search_tmovie_to" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="View4U" type="lsep" />
     <setting default="true" id="plugin_view4u_co" label="30050" type="bool" />

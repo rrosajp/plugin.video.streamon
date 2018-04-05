@@ -5,7 +5,7 @@ from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-import re, base64
+import base64
 
 SITE_IDENTIFIER = 'onlinefilme_to'
 SITE_NAME = 'OnlineFilme'
@@ -54,8 +54,8 @@ def showGenresList(entryUrl=False):
     if not entryUrl: entryUrl = params.getValue('sUrl')
     valueType = params.getValue('valueType')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    sPattern = '<li>[^<]*<a[^>]*href="([^"]+%s-online[^"]+)"[^>]*><strong>([^<]+)</strong>' % valueType
-    isMatch, aResult = cParser.parse(sHtmlContent, sPattern)
+    pattern = '<li>[^<]*<a[^>]*href="([^"]+%s-online[^"]+)"[^>]*><strong>([^<]+)</strong>' % valueType
+    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
         oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
@@ -83,7 +83,6 @@ def showEntries(entryUrl=False, sGui=False):
     pattern = 'href="([^"]+).*?original=".*?([^"]+).*?flagHolderDiv">.*?'
     pattern += "alt='([^']+).*?"
     pattern += 'title"><h2>([^<]+).*?left">([^<]+)'
-
     isMatch, aResult = cParser().parse(sContainer, pattern)
 
     if not isMatch:
@@ -97,6 +96,7 @@ def showEntries(entryUrl=False, sGui=False):
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setLanguage(sLang)
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
+	oGuiElement.setFanart(URL_MAIN + sThumbnail)
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         params.setParam('TVShowTitle', sName)
@@ -118,7 +118,7 @@ def showEpisodes():
     entryUrl = params.getValue('entryUrl')
     oRequest = cRequestHandler(entryUrl)
     sHtmlContent = oRequest.request()
-    pattern = '<dd[^>]class="accordion-navigation"><a[^>]href=".*?"><strong>([^"]+)</strong>.*?<a href=[^>]([^"]+)[^>][^>]target'
+    pattern = '<dd[^>]class="accordion-navigation"><a[^>]href=".*?"><strong>([^"]+)</strong>'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
@@ -126,11 +126,10 @@ def showEpisodes():
         return
 
     total = len(aResult)
-    for sName, sUrl in aResult:
+    for sName in aResult:
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setMediaType('episode')
-        params.setParam('entryUrl', sUrl)
         params.setParam('sEpisode', sName)
         oGui.addFolder(oGuiElement, params, False, total)
     oGui.setView('episodes')
@@ -143,16 +142,15 @@ def getLinks():
     sEpisode = params.getValue('sEpisode')
     sHtmlContent = cRequestHandler(sUrl).request()
     if sEpisode:
-        pattern = "<a href='#'>%s.*?accordion-episodes" % sEpisode
-        hLink = re.compile(pattern, flags=re.I | re.M).findall(sHtmlContent)[0]
-        pattern = "title='([^']+).*?alt='([^']+).*?<a[^>]*href='([^']+)'[^>]*onclick"
-        isMatch, aResult = cParser().parse(hLink, pattern)
+	pattern = "<strong>%s</strong>.*?</div>.*?<br>" % sEpisode
+	isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, pattern)
+	pattern = '>([^<]+)</span></form>.*?true"[^>]title="([^"]+)"></div>.*?right"'
+	pattern += "><a[^>]href='([^']+)"
+	isMatch, aResult = cParser.parse(sHtmlContainer, pattern)
     else:
-        pattern = '</span></div>.*?<a[^>]*href=["\']([^"\']+)["\'][^>]*>Weiter</a>[^<]*</div>'
-        hLink = re.compile(pattern, flags=re.I | re.M).findall(sHtmlContent)[0]
-        sHtmlContent = cRequestHandler(hLink).request()
-        sPattern = 'title="([^-"]+).*?alt="([^"]+).*?</div>[^>]*<a href="([^"]+)"[^>]*onclick'
-        isMatch, aResult = cParser().parse(sHtmlContent, sPattern)
+	pattern = '>([^"]+)</span></form>.*?true"[^>]title="([^"]+).*?</span></div>.*?'
+	pattern += "<a[^>]href='([^']+)"
+	isMatch, aResult = cParser().parse(sHtmlContent, pattern)
     return aResult
 
 
@@ -160,8 +158,8 @@ def showHosters():
     aResult = getLinks()
     hosters = []
     for sName, sLang, sUrl in aResult:
-        oRequest = cRequestHandler('http://onlinefilme.biz/' + sUrl, caching=False)
-        oRequest.request()
+	oRequest = cRequestHandler(sUrl, caching=False)
+	oRequest.request()
         hoster = {'link': oRequest.getRealUrl(), 'name': sName + ' ' + sLang}
         hosters.append(hoster)
     if hosters:
