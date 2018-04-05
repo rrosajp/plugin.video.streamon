@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-import re
-from resources.lib import jsunpacker
+import re, base64
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
 from resources.lib.handler.ParameterHandler import ParameterHandler
@@ -160,72 +159,41 @@ def showEpisodes():
 
 
 def showHosters():
-    oParams = ParameterHandler()
-    sUrl = oParams.getValue('entryUrl')
+    sUrl = ParameterHandler().getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
     pattern = 'src="([^"]+)"[^>]*frameborder'
-    aResult = cParser().parse(sHtmlContent, pattern)
+    isMatch, aResult = cParser().parse(sHtmlContent, pattern)
     hosters = []
-    if aResult[1]:
-        for hUrl in aResult[1]:
+    if isMatch:
+        for hUrl in aResult:
             if 'view.php' in hUrl:
-                oRequest = cRequestHandler(hUrl, ignoreErrors=True)
-                sHtmlContent = oRequest.request()
-                aResult = cParser.parse(sHtmlContent, '"file":"([^"]+).*?label":"([^"]+)')
-                for sUrl, sQuality in aResult[1]:
-                    sQuality = sQuality.lower()
-                    hoster = {'link': sUrl, 'name': sQuality, 'quality': QUALITY_ENUM[sQuality]}
-                    hosters.append(hoster)
-
-            if 'rapidvideo' in hUrl:
-                oRequest = cRequestHandler(hUrl, ignoreErrors=True)
-                oRequest.addHeaderEntry('Referer', sUrl)
-                sHtmlContent = oRequest.request()
-                aResult = cParser.parse(sHtmlContent, '<a[^>]*href="([^"]+)">.*?">([^<]+)')
-                for sUrl, sQuality in aResult[1]:
-                    sQuality = sQuality.lower()
-                    hoster = {'link': sUrl, 'name': 'Rapidvideo ' + sQuality, 'quality': QUALITY_ENUM[sQuality]}
-                    hosters.append(hoster)
-
-            if 'wp-embed.php' in hUrl:
-                oRequest = cRequestHandler(hUrl, ignoreErrors=True)
-                oRequest.addHeaderEntry('Referer', sUrl)
-                sHtmlContent = oRequest.request()
-                aResult = cParser.parse(sHtmlContent, '{file: "([^"]+).*?label: "([^"]+)')
-                for sUrl, sQuality in aResult[1]:
-                    sQuality = sQuality.lower()
-                    hoster = {'link': sUrl, 'name': sQuality, 'quality': QUALITY_ENUM[sQuality]}
-                    hosters.append(hoster)
-
-            if 'play' in hUrl:
-                oRequest = cRequestHandler(hUrl, ignoreErrors=True)
-                oRequest.addHeaderEntry('Referer', sUrl)
-                sHtmlContent = oRequest.request()
-                isMatch, aResult = cParser.parse(sHtmlContent, '(eval\s*\(function.*?)</script>')
-                if isMatch:
-                    for packed in aResult:
-                        try:
-                            sHtmlContent += jsunpacker.unpack(packed)
-                        except:
-                            pass
-
-                    isMatch, aResult = cParser.parse(sHtmlContent, 'file":"([^"]+)","label":"([^"]+)"')
+                sHtmlContent = cRequestHandler(hUrl).request()
+                isMatch, aResult = cParser().parse(sHtmlContent, "jbdaskgs[^>]=[^>]'([^']+)")
+                for sUrl in aResult:
+                    sUrl = base64.b64decode(sUrl)
+                    isMatch, aResult = cParser.parse(sUrl, '"file":"([^"]+).*?label":"([^"]+)')
                     for sUrl, sQuality in aResult:
-                        sQuality = sQuality.lower()
                         hoster = {'link': sUrl, 'name': sQuality, 'quality': QUALITY_ENUM[sQuality]}
                         hosters.append(hoster)
-
+            if 'wp-embed.php' in hUrl:
+                oRequest = cRequestHandler(hUrl)
+                sHtmlContent = oRequest.request()
+                aResult = cParser.parse(sHtmlContent, '<iframe[^>]src="([^"]+)')
+                for sUrl in aResult[1]:
+                    isMatch, hname = cParser().parseSingleResult(sUrl, '^(?:https?://)?(?:[^@\n]+@)?([^:/\n]+)')
+                    hoster = {'link': sUrl, 'name': hname}
+                    hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
     return hosters
 
 
 def getHosterUrl(sUrl=False):
-    entryUrl = ParameterHandler().getValue('entryUrl')
-    return [{
-        'streamUrl': sUrl + '|Referer=' + entryUrl + '|User-Agent=Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0',
-        'resolved': True}]
-
+    if 'foxx' in sUrl:
+        entryUrl = ParameterHandler().getValue('entryUrl')
+        return [{'streamUrl': sUrl + '|Referer=' + entryUrl + '|User-Agent=Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0', 'resolved': True}]
+    else:
+        return [{'streamUrl': sUrl, 'resolved': False}]
 
 def showSearchEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
