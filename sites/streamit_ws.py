@@ -1,24 +1,23 @@
 # -*- coding: utf-8 -*-
+import re
+from resources.lib import logger
 from resources.lib.gui.gui import cGui
 from resources.lib.gui.guiElement import cGuiElement
+from resources.lib.handler.ParameterHandler import ParameterHandler
 from resources.lib.handler.requestHandler import cRequestHandler
 from resources.lib.parser import cParser
-from resources.lib import logger
-from resources.lib.handler.ParameterHandler import ParameterHandler
-from resources.lib.cCFScrape import cCFScrape
-import re
 
 SITE_IDENTIFIER = 'streamit_ws'
 SITE_NAME = 'StreamIt'
 SITE_ICON = 'streamit.png'
 
-URL_MAIN = 'http://streamit.ws/'
-URL_SERIELINKS = 'http://streamit.ws/lade_episode.php'
-URL_Kinofilme = URL_MAIN + 'kino'
-URL_Filme = URL_MAIN + 'film'
-URL_SERIES = URL_MAIN + 'serie'
-URL_GENRES_FILM = URL_MAIN + 'genre-filme'
-URL_GENRES_SERIE = URL_MAIN + 'genre-serien'
+URL_MAIN = 'https://streamit.ws/'
+URL_SERIELINKS = URL_MAIN + 'lade_episode.php'
+URL_KINO = URL_MAIN + 'de/kino'
+URL_FILME = URL_MAIN + 'de/film'
+URL_SERIES = URL_MAIN + 'de/serie'
+URL_GENRES_FILM = URL_MAIN + 'de/genre-filme'
+URL_GENRES_SERIE = URL_MAIN + 'de/genre-serien'
 URL_SEARCH = URL_MAIN + 'suche.php?s=%s'
 
 
@@ -26,14 +25,14 @@ def load():
     logger.info("Load %s" % SITE_NAME)
     oGui = cGui()
     params = ParameterHandler()
-    params.setParam('sUrl', URL_Kinofilme)
+    params.setParam('sUrl', URL_KINO)
     oGui.addFolder(cGuiElement('Kino Filme', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_Filme)
+    params.setParam('sUrl', URL_FILME)
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_GENRES_FILM)
-    oGui.addFolder(cGuiElement('Film Genre', SITE_IDENTIFIER, 'showGenre'), params)
     params.setParam('sUrl', URL_SERIES)
     oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
+    params.setParam('sUrl', URL_GENRES_FILM)
+    oGui.addFolder(cGuiElement('Film Genre', SITE_IDENTIFIER, 'showGenre'), params)
     params.setParam('sUrl', URL_GENRES_SERIE)
     oGui.addFolder(cGuiElement('Serien Genre', SITE_IDENTIFIER, 'showGenre'), params)
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
@@ -45,12 +44,12 @@ def showGenre():
     params = ParameterHandler()
     entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl).request()
-    isMatch, aResult = cParser().parse(sHtmlContent, '<h3 class="title">Alle Kategorien</h3>.*?</ul><div class="clear">')
+    isMatch, aResult = cParser().parse(sHtmlContent, 'id="categories.*?class="clear">')
 
     if isMatch:
         sHtmlContent = aResult[0]
 
-    pattern = '<a[^>]href="([^"]+)"[^>]*>([^<]+)</a>([^<]+)'  # url / title / Nr
+    pattern = '<a[^>]href="([^"]+)"[^>]*>([^<]+)</a>([^<]+)'
     isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
     for sUrl, sTitle, Nr in aResult:
@@ -62,7 +61,7 @@ def showGenre():
 def showEntries(entryUrl=False, sGui=False):
     oGui = sGui if sGui else cGui()
     params = ParameterHandler()
-    if not entryUrl: entryUrl = params.getValue('sUrl')
+    entryUrl = params.getValue('sUrl')
 
     iPage = int(params.getValue('page'))
     if iPage > 0:
@@ -70,7 +69,7 @@ def showEntries(entryUrl=False, sGui=False):
 
     oRequestHandler = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
     sHtmlContent = oRequestHandler.request()
-    pattern = '<a[^>]*href="([^"]+)" title="([^"]+)"><img src="([^"]+)" alt="'
+    pattern = '<div[^>]class="post-thumb">.*?<a[^>]*href="([^"]+)"[^>]title="([^"]+)">.*?src="([^"]+)"'
     isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
     if not isMatch:
@@ -81,12 +80,17 @@ def showEntries(entryUrl=False, sGui=False):
     for sUrl, sName, sThumbnail in aResult:
         isTvshow = True if "serie" in sUrl else False
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
+        if sThumbnail.startswith('//'):
+            sThumbnail = 'https:' + sThumbnail
         if sThumbnail.startswith('/'):
             sThumbnail = URL_MAIN + sThumbnail
-        sThumbnail = cCFScrape().createUrl(sThumbnail, oRequestHandler)
         oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setFanart(sThumbnail)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
-        params.setParam('entryUrl', URL_MAIN + sUrl)
+        if sUrl.startswith('http'):
+            params.setParam('entryUrl', sUrl)
+        if not sUrl.startswith('http'):
+            params.setParam('entryUrl', URL_MAIN + sUrl)
         params.setParam('sName', sName)
         params.setParam('Thumbnail', sThumbnail)
         oGui.addFolder(oGuiElement, params, isTvshow, total)
@@ -124,6 +128,7 @@ def showSeasons():
         oGuiElement.setSeason(iSeason)
         oGuiElement.setMediaType('season')
         oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setFanart(sThumbnail)
         oGui.addFolder(oGuiElement, params, True, total)
     oGui.setView('seasons')
     oGui.setEndOfDirectory()
@@ -153,6 +158,7 @@ def showEpisodes():
             sEpisodeTitle = '%s - %s' % (sEpisodeNr, res.group(1))
         oGuiElement = cGuiElement(sEpisodeTitle, SITE_IDENTIFIER, "showHosters")
         oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setFanart(sThumbnail)
         oGuiElement.setTVShowTitle(sShowName)
         oGuiElement.setEpisode(sEpisodeNr)
         oGuiElement.setSeason(sSeason)
@@ -178,12 +184,12 @@ def showHosters():
 
     sHtmlContent = oRequestHandler.request()
     hosters = []
-    isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, '<select[^>]*class="sel_quali"[^>]*>(.*?)</select>')  # filter main content if needed
+    isMatch, sContainer = cParser().parseSingleResult(sHtmlContent, '<select[^>]*class="sel_quali"[^>]*>(.*?)</select>')
 
     if not isMatch:
         return hosters
 
-    isMatch, aResult = cParser().parse(sContainer, '<option[^>]*\((?:[^>]*quality/(\d+)\.png)?[^>]*id="(\w+)"[^>]*>(.*?)</option>')  # filter main content if needed
+    isMatch, aResult = cParser().parse(sContainer, '<option[^>]*\((?:[^>]*quality/(\d+)\.png)?[^>]*id="(\w+)"[^>]*>(.*?)</option>')
 
     if not isMatch:
         return hosters
