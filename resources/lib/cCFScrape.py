@@ -73,6 +73,9 @@ class cCFScrape:
             response = opener.open(request)
         except urllib2.HTTPError as e:
             response = e
+	    
+        if response.code != 503:
+            return response
 
         body = response.read()
         cookie_jar.extract_cookies(response, request)
@@ -84,7 +87,7 @@ class cCFScrape:
         try:
             params["jschl_vc"] = re.search(r'name="jschl_vc" value="(\w+)"', body).group(1)
             params["pass"] = re.search(r'name="pass" value="(.+?)"', body).group(1)
-            js = self._extract_js(body)
+            js = self._extract_js(body, parsed_url.netloc)
         except:
             return None
 
@@ -108,7 +111,7 @@ class cCFScrape:
                 entry.expires = sys.maxint
 
     @staticmethod
-    def _extract_js(htmlcontent):
+    def _extract_js(htmlcontent, domain):
         line1 = re.findall('var s,t,o,p,b,r,e,a,k,i,n,g,f, (.+?)={"(.+?)":\+*(.+?)};', htmlcontent)
         varname = line1[0][0] + '.' + line1[0][1]
         calc = parseInt(line1[0][2])
@@ -116,8 +119,7 @@ class cCFScrape:
 
         for aEntry in AllLines:
             calc = eval(format(calc, '.17g') + str(aEntry[0]) + format(parseInt(aEntry[1]), '.17g'))
-        domain = re.findall('</span> ([^"]+).</h1>', htmlcontent)
-        rep = calc + len(domain[0])
+        rep = calc + len(domain)
         return format(rep, '.10f')
 
     @staticmethod

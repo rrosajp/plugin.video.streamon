@@ -62,7 +62,7 @@ def showEntries(entryUrl=False, sGui=False):
     params = ParameterHandler()
     if not entryUrl: entryUrl = params.getValue('sUrl')
     sHtmlContent = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False)).request()
-    pattern = '<div[^>]*class="poster">.*?original="([^"]+).*?<a[^>]*href="([^"]+)">([^<]+).*?(?:<span>([^<]+)?).*?<div[^>]*class="texto">([^<]+)'
+    pattern = '<div[^>]*class="poster"><img src="([^"]+)"[^>]alt="([^"]+).*?</div><a href="([^"]+).*?<span>([\d]+)</span>.*?<div[^>]class="texto">([^"]+)</div>'
     isMatch, aResult = cParser.parse(sHtmlContent, pattern)
 
     if not isMatch:
@@ -70,7 +70,7 @@ def showEntries(entryUrl=False, sGui=False):
         return
 
     total = len(aResult)
-    for sThumbnail, sUrl, sName, sYear, sDesc in aResult:
+    for sThumbnail, sName, sUrl, sYear, sDesc in aResult:
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
         isTvshow = True if "serie" in sUrl else False
         if sThumbnail and not sThumbnail.startswith('http'):
@@ -78,8 +78,8 @@ def showEntries(entryUrl=False, sGui=False):
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setThumbnail(sThumbnail)
-        if sYear:
-            oGuiElement.setYear(sYear)
+        oGuiElement.setFanart(sThumbnail)
+        oGuiElement.setYear(sYear)
         oGuiElement.setDescription(sDesc)
         sUrl = cUtil.quotePlus(sUrl)
         params.setParam('entryUrl', sUrl)
@@ -118,6 +118,7 @@ def showSeasons():
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setSeason(sSeasonNr)
         oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setFanart(sThumbnail)
         params.setParam('sSeasonNr', int(sSeasonNr))
         oGui.addFolder(oGuiElement, params, True, total)
     oGui.setView('seasons')
@@ -138,7 +139,7 @@ def showEpisodes():
         oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
-    pattern = '<a[^>]*href="([^"]+)"[^>]*>([^<]+)'
+    pattern = '<img[^>]src="([^"]+).*?<a[^>]*href="([^"]+)"[^>]*>([^<]+)'
     isMatch, aResult = cParser.parse(sContainer, pattern)
 
     if not isMatch:
@@ -146,11 +147,13 @@ def showEpisodes():
         return
 
     total = len(aResult)
-    for sUrl, sEpisodeNr in aResult:
-        oGuiElement = cGuiElement('Folge' + sEpisodeNr, SITE_IDENTIFIER, 'showHosters')
+    for sThumbnail, sUrl, sEpisodeNr in aResult:
+        sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
+        oGuiElement = cGuiElement(sEpisodeNr, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setTVShowTitle(sTVShowTitle)
         oGuiElement.setSeason(sSeasonNr)
-        oGuiElement.setEpisode(sEpisodeNr)
+        oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setFanart(sThumbnail)
         oGuiElement.setMediaType('episode')
         params.setParam('entryUrl', sUrl.strip())
         oGui.addFolder(oGuiElement, params, False, total)
@@ -216,6 +219,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
         oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeasons' if isTvshow else 'showHosters')
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setThumbnail(sThumbnail)
+        oGuiElement.setFanart(sThumbnail)
         oGuiElement.setYear(sYear)
         oGuiElement.setDescription(sDesc)
         sUrl = cUtil.quotePlus(sUrl)

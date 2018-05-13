@@ -14,7 +14,7 @@ SITE_NAME = 'SerienStream'
 SITE_ICON = 'serienstream.png'
 SITE_SETTINGS = '<setting id="serienstream.user" type="text" label="30083" default="serienstream@trash-mail.com" /><setting id="serienstream.pass" type="text" option="hidden" label="30084" default="test1234" />'
 
-URL_MAIN = 'http://serienstream.to'
+URL_MAIN = 'http://s.to'
 URL_SERIES = URL_MAIN + '/serien'
 URL_LOGIN = URL_MAIN + "/login"
 

@@ -13,11 +13,13 @@ from resources.lib.parser import cParser
 SITE_IDENTIFIER = 'movie4k_to'
 SITE_NAME = 'Movie4k'
 SITE_ICON = 'movie4k.png'
-SITE_SETTINGS = '<setting default="movie4k.tv" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.tv|movie.to|movie4k.me|movie4k.org|movie4k.pe|movie4k.am" />'
+SITE_SETTINGS = '<setting default="movie4k.io" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.tv|movie.to|movie4k.me|movie4k.org|movie4k.pe|movie4k.am|movie4k.io" />'
 oConfig = cConfig()
 DOMAIN = oConfig.getSetting('movie4k_to-domain')
 ####
-URL_MAIN = 'http://www.' + DOMAIN
+#URL_MAIN = 'http://www.' + DOMAIN
+URL_MAIN = 'https://movie4k.io'
+
 URL_MOVIES = URL_MAIN + '/index.php'
 URL_MOVIES_ALL = URL_MAIN + '/movies-all'
 URL_MOVIES_GENRE = URL_MAIN + '/genres-movies.html'
@@ -35,7 +37,7 @@ URL_SEARCH = URL_MAIN + '/movies.php?list=search&search=%s'
 
 def load():
     oGui = cGui()
-    __clearProtection()
+#    __clearProtection()
     __createMainMenuItem(oGui, 'Filme', '', 'showMovieMenu')
     __createMainMenuItem(oGui, 'Serien', '', 'showSeriesMenu')
     if showAdult():

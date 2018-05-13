@@ -14,7 +14,6 @@ SITE_GLOBAL_SEARCH = False
 
 URL_MAIN = 'https://watchbox.to/'
 URL_FILME = URL_MAIN + 'filme/'
-URL_SERIE = URL_MAIN + 'serien/'
 URL_SEARCH = URL_MAIN + '?s=%s'
 
 
@@ -24,8 +23,6 @@ def load():
     params = ParameterHandler()
     params.setParam('sUrl', URL_FILME)
     oGui.addFolder(cGuiElement('Filme', SITE_IDENTIFIER, 'showEntries'), params)
-    params.setParam('sUrl', URL_SERIE)
-    oGui.addFolder(cGuiElement('Serien', SITE_IDENTIFIER, 'showEntries'), params)
     oGui.addFolder(cGuiElement('Genre', SITE_IDENTIFIER, 'showGenre'))
     oGui.addFolder(cGuiElement('Suche', SITE_IDENTIFIER, 'showSearch'))
     oGui.setEndOfDirectory()
@@ -55,7 +52,7 @@ def showEntries(entryUrl=False, sGui=False):
     oRequest = cRequestHandler(entryUrl, ignoreErrors=(sGui is not False))
 
     sHtmlContent = oRequest.request()
-    pattern = '<article[^>]id.*?class="TPost([^"]+)">.*?<a[^>]href="([^"]+)">.*?[^>]src="([^"]+)".*?<h2[^>]class="Title">([^<]+).*?<span[^>]class="Year">([^<]+).*?<div[^>]class="Description">([^"]+)</p>'
+    pattern = '<article[^>]id.*?<a[^>]href="([^"]+)">.*?[^>]src="([^"]+)".*?<h2[^>]class="Title">([^<]+).*?<span[^>]class="Year">([^<]+).*?<div[^>]class="Description">([^"]+)</p>'
     isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
     if not isMatch:
@@ -63,65 +60,36 @@ def showEntries(entryUrl=False, sGui=False):
         return
 
     total = len(aResult)
-    for isTv, sUrl, sThumbnail, sName, sYear, sDesc in aResult:
-        isTvshow = True if 'seasons' in isTv.lower() else False
+    for sUrl, sThumbnail, sName, sYear, sDesc in aResult:
         sThumbnail = re.sub('-\d+x\d+\.', '.', sThumbnail)
-        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showSeries' if isTvshow else 'showHosters')
+        oGuiElement = cGuiElement(sName, SITE_IDENTIFIER, 'showHosters')
         oGuiElement.setThumbnail(sThumbnail)
         oGuiElement.setFanart(sThumbnail)
         oGuiElement.setDescription(sDesc)
         oGuiElement.setYear(sYear)
-        oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
+        oGuiElement.setMediaType('movie')
         params.setParam('sThumbnail', sThumbnail)
         params.setParam('sName', sName)
         params.setParam('entryUrl', sUrl)
-        oGui.addFolder(oGuiElement, params, isTvshow, total)
+        oGui.addFolder(oGuiElement, params, False, total)
     if not sGui:
         isMatchNextPage, sNextUrl = cParser().parseSingleResult(sHtmlContent, 'href="([^"]+)">Weiter')
         if isMatchNextPage:
             params.setParam('sUrl', sNextUrl)
             oGui.addNextPage(SITE_IDENTIFIER, 'showEntries', params)
-        oGui.setView('tvshows' if 'seasons' in isTv.lower() else 'movies')
+        oGui.setView('movies')
         oGui.setEndOfDirectory()
-
-
-def showSeries():
-    oGui = cGui()
-    params = ParameterHandler()
-    entryUrl = params.getValue('entryUrl')
-    sThumbnail = params.getValue('sThumbnail')
-    sTVShowTitle = params.getValue('sName')
-    sHtmlContent = cRequestHandler(entryUrl).request()
-    pattern = '<td[^>]class="MvTbTtl"><a[^>]href="([^"]+)">'
-    isMatch, aResult = cParser.parse(sHtmlContent, pattern)
-
-    if not isMatch:
-        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
-        return
-
-    aResult = sorted(set(aResult), key=aResult.index)
-    total = len(aResult)
-    for sSeasonNr in aResult:
-        res = re.search('-([\d]+)x([\d]+)', sSeasonNr, re.I)
-        oGuiElement = cGuiElement('Staffel %s - Episode %s' % (res.group(1), int(res.group(2))), SITE_IDENTIFIER, 'showHosters')
-        oGuiElement.setMediaType('season')
-        oGuiElement.setTVShowTitle(sTVShowTitle)
-        oGuiElement.setThumbnail(sThumbnail)
-        params.setParam('entryUrl', sSeasonNr)
-        oGui.addFolder(oGuiElement, params, False, total)
-    oGui.setView('seasons')
-    oGui.setEndOfDirectory()
 
 
 def showHosters():
     sUrl = ParameterHandler().getValue('entryUrl')
     sHtmlContent = cRequestHandler(sUrl).request()
-    sPattern = 'target="_blank"[^>]href="([^"]+)"[^>]class="Button.*?">([^<]+)</span>'
+    sPattern = 'target="_blank"[^>]href="([^"]+)".*?alt="([^"]+)"></span>'
     isMatch, aResult = cParser().parse(sHtmlContent, sPattern)
     hosters = []
     if isMatch:
         for sUrl, sName in aResult:
-            hoster = {'link': sUrl, 'name': sName}
+            hoster = {'link': sUrl, 'name': sName[6:]}
             hosters.append(hoster)
     if hosters:
         hosters.append('getHosterUrl')
