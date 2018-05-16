@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<addon id="plugin.video.streamon" name="streamon" version="3.5.4" provider-name="xstream-Team">
+ <requires>
+   <import addon="xbmc.python"                 version="2.14.0"/>
+   <import addon="repository.xstreamon"          version="1.0.0" />
+   <import addon="script.module.urlresolver"   version="3.0.0"/>
+   <import addon="script.module.metahandler"   version="1.0.0"/>
+   <import addon="script.module.mechanize"     version="0.2.6"/>
+ </requires>
+ <extension point="xbmc.python.pluginsource" library="default.py">
+   <provides>video</provides>
+ </extension>
+ <extension point="xbmc.addon.metadata">
+   <summary lang="de">Watch streamon!</summary>
+   <description lang="de">Mit diesem Addon kannst du auf alle angebotenen Streams verschiedenster deutschen Quellen zugreifen.[CR]</description>
+   <disclaimer lang="de">Die von diesem Addon dargestellten Inhalte werden von den Erstellern des Addons weder gehostet oder verbreitet, noch stehen die Ersteller in irgendeiner Beziehung zu den Content-Anbietern.</disclaimer>
+   <source>https://github.com/xstreamon/plugin.video.streamon.git</source>
+   <license>GNU GPLv3</license>
+   <platform>all</platform>
+   <news>Big THX to all contributors!</news>
+   <assets>
+     <icon>icon.png</icon>
+     <fanart>fanart.jpg</fanart>
+     <screenshot>resources/art/screenshot-01.png</screenshot>
+     <screenshot>resources/art/screenshot-02.png</screenshot>
+     <screenshot>resources/art/screenshot-03.png</screenshot>
+     <screenshot>resources/art/screenshot-04.png</screenshot>
+     <screenshot>resources/art/screenshot-05.png</screenshot>
+   </assets>
+ </extension>
+</addon>
