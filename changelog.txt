@@ -1,7 +1,84 @@
-Nightly Updates
+ Nightly Updates
+ - kinodogs.to entfernt (Seite offline)
+ - seriesever.net entfernt (Seite offline)
+ - tmovie.to entfernt (Seite offline)
+ - foxx.to (Anpassung in der Bildanzeige und die Hosterermittlung wurde gefixt)
+ - [serienstream.to] Fix Suche tnx sP4rK
+ - [bs.to] API KEY funktioniert nicht mehr
+ - {streamon.py] code cleanup
+ - [serienstream.to] fix hoster & code cleanup
+ - Update CFScraper
+ - [watchbox.to] fix
+ - [movie4k] dirty fast fix
+ - [Foxx] Fix
+ - [moviex.co] entfernt seite aufgegeben ersetzt durch Movies.gg
+ - [cine.to] entfernt benutzt recaptcha
+  
+  streamon 3.4.8
+ 
+ - [streamit.ws] fix Seite
+ - [Kinox.one] Seite hinzugefügt
+ - [Movies.gg] Seite hinzugefügt
+ - [Foxx.to] Fix Hoster
+ - [TMovie.to] Seite hinzugefügt
+ - [HD-Streams_org] Fix Hoster
+ - Cinenator entfernt (Seite offline)
+ - [Onlinefilme] Fix Hoster
+ - Update cCFScrape.py
+ 
+ streamon 3.4.7
+ 
+- [Streamdream.ws] Fix Serien [tnx koditorsten] 
+- [Kinostern] Seite hinzugefügt
+- [Watchbox.de] Optimize code, Add Fanart, Seitenname angepasst & Globale Suche standartmäßig deaktiviert
+- [Watchbox.to] Seite hinzugefügt
+- [Kinoger.com] Seite hinzugefügt
+- [Cinematrix.to] Seite hinzugefügt 
+- [moviex.co] Seite hinzugefügt
+
+streamon 3.4.6
+
+- Kinostreamz und FilmeStreamz entfernt (Seiten offline)
+- Quick Fix Anmeldedaten Serienstream.to 
+- Add SzeneStreams
+- Foxx Fix search
+- Update util.py
+- HD-Streams Fix search und Code Cleanup
+- Update HDStreams (Fix Regex)
+- Streamit Suche hinzugefügt und Code optimiert
+
+streamon 3.4.5
+
+- Update jsunpacker.py
+- Fix Foxx
+- Cinenator Fix Bug's und Code optimiert
+- video2k entfernt
+- Add Movie2k AG
+- Fix CFScrape für HD-Streams
+- Add HD-Streams
+- Onlinefilme Code optimiert
+- Video4k entfernt (umleitung auf cine.to)
+- HD-Streams add Nxload direct
+
+streamon 3.4.4
+
+- URLResolver AutoUpdate - Standard deaktiviert
+- Update settings.xml
+- Fix DDL.me Genres
+- Watchbox Code Optimiert und Regex fix
+- Fix Streamdream Hoster Problem
+- Add OnlineFilme
+- Folgende Seiten entfernt:
+     1kino, Goldstream, Meinkino, Moviesever, RapidStream, streamkisteTV, SzeneStreams, 
+     tata (aktuell keine Filme und Serien mehr)
+
+streamon 3.4.3
 
 - Anmeldedaten für Serienstream.to eingefügt (Danke an WizzardMaker)
 - Fix hdfilme_tv (Danke an vka)
+- Watchbox hinzugefügt
+- Meinkino.to entfernt
+- Update Flimmerstube
 
 streamon 3.4.2
 

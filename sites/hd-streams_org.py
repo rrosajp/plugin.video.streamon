@@ -147,7 +147,7 @@ def showHosters():
 def getHosterUrl(sUrl=False):
     if 'nxload' in sUrl:
         sHtmlContent = cRequestHandler(sUrl).request()
-	sPattern = '<source[^>]src="([^"]+)'
+        sPattern = '<source[^>]src="([^"]+)'
         isMatch, sUrl = cParser.parse(sHtmlContent, sPattern)
         return [{'streamUrl': sUrl[0], 'resolved': True}]
     else:

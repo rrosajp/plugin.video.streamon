@@ -13,13 +13,12 @@ SITE_IDENTIFIER = 'animes-stream24_tv'
 SITE_NAME = 'Animes-Stream24'
 SITE_ICON = 'as24.png'
 URL_MAIN = 'http://as.animes-stream24.tv/'
-URL_MAIN_2 = 'http://as.anime-stream24.co/' #BACKUP URL
 
 def load():
     oGui = cGui()
     params = ParameterHandler()
     logger.info("Load %s" % SITE_NAME)
-    if showAdult():
+    if showAdult(True): #Adult object off
         params.setParam('entryMode', "a_z")
         oGui.addFolder(cGuiElement('A BIS Z', SITE_IDENTIFIER, 'showMovies'), params)
         params.setParam('entryMode', "top_animes")
@@ -164,7 +163,7 @@ def getEpisodes():
         params.setParam('eUrl', bResult[1][0])
         oGui.addFolder(cGuiElement("Weitere Episoden -->", SITE_IDENTIFIER, 'getEpisodes'),params)
     
-    #logger.info('[[suhmser]] %s: ' % str(bResult[1][0]))    
+    #logger.info('[[AZ24]] %s: ' % str(bResult[1][0]))    
     oGui.setView('movies')
     oGui.setEndOfDirectory()
 
@@ -175,29 +174,35 @@ def getHosters():
 
     sHtmlContent = cRequestHandler(sUrl).request()
 
-    sPattern = '<iframe.*?(?:src|SRC)="([^"]+).*?(?:\<\/if|\<\/IF)'
+    sPattern = '(?:<iframe|<IFRAME).*?(?:src|SRC)="([^"]+).*?(?:\<\/if|\<\/IF)'
     sPattern_bkp = '-[0-9]".?>.*?(?:src|SRC)="([^"]+)".*?'
-    #sPattern_alone = '#fragment.*?src|SRC="//([^"]+)".*?>(?:' #s_url
     aResult = cParser().parse(sHtmlContent, sPattern)
 
     if aResult[0]:
-       hosters = []
-       #test_link = "*.mp4"
-       #hosters.append({'link': test_link, 'name': 'Testing_link', 'resolveable': True})
-       reg_ex = re.compile('(?://|\.)?(?:[a-zA-Z0-9]+\.)?([a-zA-Z0-9-.]{0,})\..*?\/.*?\/?', re.I)
-       for sUrl in aResult[1]:
-           sName = re.search(reg_ex, sUrl).group(1)
-           if not sUrl.startswith('http'):
-             if sUrl.startswith('//'):
-                 sUrl = 'http:%s' % sUrl
-             else:
-                 sUrl = 'http://%s' % sUrl
-           hosters.append({'link': sUrl, 'name': sName, 'resolveable': True})
-       if hosters:
-          hosters.append('getHosterUrl')
-       return hosters
+        hosters = []
+        #test_link = '*.m3u8'
+        #hosters.append({'link': test_link + '##testing', 'name': 'Test LAB', 'resolveable': True})
+        reg_ex = re.compile('(?://|\.)?(?:[a-zA-Z0-9]+\.)?([a-zA-Z0-9-.]{0,})\..*?\/.*?\/?', re.I)
+        for sUrl in aResult[1]:
+            #CHECK IF PL.AS24 RESOLVE
+            if 'pl.anime-stream24' in sUrl:
+                sUrl = _plas24_resolver(sUrl)           
+            sName = re.search(reg_ex, sUrl).group(1)
+            
+            if not sUrl.startswith('http'):
+                if sUrl.startswith('//'):
+                    sUrl = 'http:%s' % sUrl
+                else:
+                    sUrl = 'http://%s' % sUrl
+            hosters.append({'link': sUrl, 'name': sName, 'resolveable': True})
+        
+        if hosters:
+            hosters.append('getHosterUrl')
+        
+        logger.info('[[AZ24]] HOSTER ARRAY %s ' % str(hosters))
+        return hosters
     else:
-       oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
 
 def getHosterUrl(sUrl=False):
     if not sUrl:
@@ -215,17 +220,39 @@ def getHosterUrl(sUrl=False):
     elif sUrl in set(['web.tv','plublicvideohost.org']): #or bigfile.to
         sUrl = _webtv_resolver(sUrl)
         res = True
+    elif 'cloudvideo.tv' in sUrl:
+        sUrl = _webtv_resolver(sUrl)
+        res = True
+    elif 'testing' in sUrl:
+        res = True
     else:
         res = False
 
     results = []
     result = {}
-    #logger.info('[[suhmser]] Url %s after:getHosterUrl(): ' % sUrl)
+    #logger.info('[[AS24]] Url %s after:getHosterUrl(): ' % sUrl)
     result['streamUrl'] = sUrl
     result['resolved'] = res
     results.append(result)
     return results #play > [sUrl,[BOOL]]
 
+def _plas24_resolver(url):
+    sHtmlContent = cRequestHandler(url).request()
+    match = re.findall('<iframe src="(.+?)"', sHtmlContent)
+    if match:
+        url = match[0]
+        #content = requests.get(url, headers=headers).text.replace('\\','')
+        if url:
+            try:
+                url = _redirectHoster(url, True, True)
+            except Exception as e:
+                pass #if ignore
+                logger.info('Failed [AS24 LAB]: '+ str(e))
+                url = "http://hoster.offline.off/off"
+            return url
+        else:
+            xbmc.executebuiltin('Notification(Info: Error: URL,)')
+            
 def _as24_resolver(url):
     oParams = ParameterHandler()
     sHtmlContent = cRequestHandler(url).request()
@@ -255,9 +282,9 @@ def _webtv_resolver(url):
         #(?:file|source)+?:.?(?:"|')(.*?.[a-zA-Z0-9]{2,3}+)(?:"|')
     if 'uploadkadeh.com' in url:
         aResult = cParser().parse(sHtmlContent, 'player_code.*?video\|([^\|]+)')
-    #else
-        # TODO: check mit urlresolver?
-
+    if 'cloudvideo.tv' in url:
+        aResult = cParser().parse(sHtmlContent, 'source..*?"(.+?)"')
+        
     for sUrl in aResult[1]:
         if sUrl:
             return sUrl
@@ -283,7 +310,7 @@ def _anistream_resolver(o_url):
                 pass
             return url
         else:
-            xbmc.executebuiltin('Notification(Info: Error: URL,)')
+            xbmc.executebuiltin('Notification(Info: Error: NO URL)')
 
 def _redirectHoster(url, ref = False, cookie = False):
 
@@ -297,14 +324,12 @@ def _redirectHoster(url, ref = False, cookie = False):
            return request
            
        request = req(url)
-       response = urllib2.urlopen(request, timeout=30) #Bypass Timeout Issues    
+       response = urllib2.urlopen(request, timeout=244) #Bypass Timeout Issues    
        
-       
-       #response=page.read();page.close()
        if cookie or 'Set-Cookie' in response.info(): 
            request = req(URL_MAIN)
            res = urllib2.urlopen(request, timeout=12)
-           cookie = res.info()['Set-Cookie']#Get Cookieinfo
+           cookie = res.info()['Set-Cookie'] #Get Cookieinfo
       
        if cookie:
            request.add_header('Cookie',cookie)
@@ -332,11 +357,11 @@ def _search(oGui, sSearchText):
     ParameterHandler().setParam('search_on', sSearchText)
     showMovies(False, oGui, sSearchText)
 
-def showAdult():
+def showAdult(switch = False):
     oConfig = cConfig()
     if oConfig.getSetting('showAdult')=='true':
         return True
-    return False
+    return switch
 
 def getConf():
     oGui = cGui()

@@ -31,14 +31,6 @@
     <setting default="true" id="plugin_animes-stream24_tv" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_animes-stream24_tv" label="30052" type="bool" />
     <setting type="sep" />
-    <setting label="BurningSeries" type="lsep" />
-    <setting default="true" id="plugin_burning_series_org" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_burning_series_org" label="30052" type="bool" />
-    <setting type="sep" />
-    <setting label="Cine" type="lsep" />
-    <setting default="true" id="plugin_cine_to" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_cine_to" label="30052" type="bool" />
-    <setting type="sep" />
     <setting label="Cinematrix" type="lsep" />
     <setting default="true" id="plugin_cinematrix_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_cinematrix_to" label="30052" type="bool" />
@@ -112,7 +104,7 @@
     <setting label="Movie4k" type="lsep" />
     <setting default="true" id="plugin_movie4k_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_movie4k_to" label="30052" type="bool" />
-    <setting default="movie4k.tv" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.tv|movie.to|movie4k.me|movie4k.org|movie4k.pe|movie4k.am" />
+    <setting default="movie4k.io" enable="!eq(-2,false)" id="movie4k_to-domain" label="30051" type="labelenum" values="movie4k.to|movie4k.tv|movie.to|movie4k.me|movie4k.org|movie4k.pe|movie4k.am|movie4k.io" />
     <setting type="sep" />
     <setting label="Movies.GG" type="lsep" />
     <setting default="true" id="plugin_movies_gg" label="30050" type="bool" />
@@ -121,10 +113,6 @@
     <setting label="MovieTown" type="lsep" />
     <setting default="true" id="plugin_movietown_org" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_movietown_org" label="30052" type="bool" />
-    <setting type="sep" />
-    <setting label="Moviex" type="lsep" />
-    <setting default="true" id="plugin_moviex_co" label="30050" type="bool" />
-    <setting default="true" enable="!eq(-1,false)" id="global_search_moviex_co" label="30052" type="bool" />
     <setting type="sep" />
     <setting label="MyKino" type="lsep" />
     <setting default="true" id="plugin_mykino_to" label="30050" type="bool" />
@@ -141,8 +129,8 @@
     <setting label="SerienStream" type="lsep" />
     <setting default="true" id="plugin_serienstream_to" label="30050" type="bool" />
     <setting default="true" enable="!eq(-1,false)" id="global_search_serienstream_to" label="30052" type="bool" />
-    <setting default="serienstream@trash-mail.com" id="serienstream.user" label="30083" type="text" />
-    <setting default="test1234" id="serienstream.pass" label="30084" option="hidden" type="text" />
+    <setting default="" id="serienstream.user" label="30083" type="text" />
+    <setting default="" id="serienstream.pass" label="30084" option="hidden" type="text" />
     <setting type="sep" />
     <setting label="SeriesEver" type="lsep" />
     <setting default="true" id="plugin_seriesever_net" label="30050" type="bool" />

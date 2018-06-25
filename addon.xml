@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.streamon" name="streamon" version="3.5.4" provider-name="xstream-Team">
+<addon id="plugin.video.streamon" name="streamon" version="13.4.8" provider-name="streamon-Team">
  <requires>
    <import addon="xbmc.python"                 version="2.14.0"/>
-   <import addon="repository.xstreamon"          version="1.0.0" />
    <import addon="script.module.urlresolver"   version="3.0.0"/>
    <import addon="script.module.metahandler"   version="1.0.0"/>
    <import addon="script.module.mechanize"     version="0.2.6"/>
@@ -12,12 +11,28 @@
  </extension>
  <extension point="xbmc.addon.metadata">
    <summary lang="de">Watch streamon!</summary>
-   <description lang="de">Mit diesem Addon kannst du auf alle angebotenen Streams verschiedenster deutschen Quellen zugreifen.[CR]</description>
+   <description lang="de">Mit diesem Addon kannst du auf alle angebotenen Streams verschiedenster deutschen Quellen zugreifen</description>
    <disclaimer lang="de">Die von diesem Addon dargestellten Inhalte werden von den Erstellern des Addons weder gehostet oder verbreitet, noch stehen die Ersteller in irgendeiner Beziehung zu den Content-Anbietern.</disclaimer>
-   <source>https://github.com/xstreamon/plugin.video.streamon.git</source>
+   <summary lang="en">Watch streamon!</summary>
+   <description lang="en">With this addon you can watch all the streams from various german sources</description>
+   <disclaimer lang="en">The creators of this addon do not host or distribute any of the content displayed by the addon nor do they have any affiliation with the content providers.</disclaimer>
+   <forum>http://lastship.square7.ch/forum/forumdisplay.php?fid=15</forum>
+   <source>https://github.com/lastship/plugin.video.streamon</source>
    <license>GNU GPLv3</license>
    <platform>all</platform>
-   <news>Big THX to all contributors!</news>
+   <news>
+streamon 3.4.8
+ 
+- [streamit.ws] fix Seite
+- [Kinox.one] Seite hinzugefügt
+- [Movies.gg] Seite hinzugefügt
+- [Foxx.to] Fix Hoster
+- [TMovie.to] Seite hinzugefügt
+- [HD-Streams_org] Fix Hoster
+- Cinenator entfernt (Seite offline)
+- [Onlinefilme] Fix Hoster
+- Update cCFScrape.py
+   </news>
    <assets>
      <icon>icon.png</icon>
      <fanart>fanart.jpg</fanart>

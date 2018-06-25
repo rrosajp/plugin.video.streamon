@@ -96,7 +96,7 @@ def showEntries(entryUrl=False, sGui=False):
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         oGuiElement.setLanguage(sLang)
         oGuiElement.setThumbnail(URL_MAIN + sThumbnail)
-	oGuiElement.setFanart(URL_MAIN + sThumbnail)
+        oGuiElement.setFanart(URL_MAIN + sThumbnail)
         oGuiElement.setYear(sYear)
         oGuiElement.setMediaType('tvshow' if isTvshow else 'movie')
         params.setParam('TVShowTitle', sName)
@@ -142,15 +142,15 @@ def getLinks():
     sEpisode = params.getValue('sEpisode')
     sHtmlContent = cRequestHandler(sUrl).request()
     if sEpisode:
-	pattern = "<strong>%s</strong>.*?</div>.*?<br>" % sEpisode
-	isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, pattern)
-	pattern = '>([^<]+)</span></form>.*?true"[^>]title="([^"]+)"></div>.*?right"'
-	pattern += "><a[^>]href='([^']+)"
-	isMatch, aResult = cParser.parse(sHtmlContainer, pattern)
+        pattern = "<strong>%s</strong>.*?</div>.*?<br>" % sEpisode
+        isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, pattern)
+        pattern = '>([^<]+)</span></form>.*?true"[^>]title="([^"]+)"></div>.*?right"'
+        pattern += "><a[^>]href='([^']+)"
+        isMatch, aResult = cParser.parse(sHtmlContainer, pattern)
     else:
-	pattern = '>([^"]+)</span></form>.*?true"[^>]title="([^"]+).*?</span></div>.*?'
-	pattern += "<a[^>]href='([^']+)"
-	isMatch, aResult = cParser().parse(sHtmlContent, pattern)
+        pattern = '>([^"]+)</span></form>.*?true"[^>]title="([^"]+).*?</span></div>.*?'
+        pattern += "<a[^>]href='([^']+)"
+        isMatch, aResult = cParser().parse(sHtmlContent, pattern)
     return aResult
 
 
@@ -158,8 +158,8 @@ def showHosters():
     aResult = getLinks()
     hosters = []
     for sName, sLang, sUrl in aResult:
-	oRequest = cRequestHandler(sUrl, caching=False)
-	oRequest.request()
+        oRequest = cRequestHandler(sUrl, caching=False)
+        oRequest.request()
         hoster = {'link': oRequest.getRealUrl(), 'name': sName + ' ' + sLang}
         hosters.append(hoster)
     if hosters:

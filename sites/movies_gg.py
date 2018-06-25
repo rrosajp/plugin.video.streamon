@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+﻿# -*- coding: utf-8 -*-
 import json, re
 from resources.lib import logger
 from resources.lib.gui.gui import cGui
@@ -52,7 +52,7 @@ def showGenre():
     isMatch, aResult = cParser.parse(sHtmlContent, '<a[^>]href="/de/genres/([^"]+)"')
 
     if not isMatch:
-        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     for sName in aResult:
@@ -69,13 +69,13 @@ def showEntries(entryUrl=False, sGui=False):
     sJson = cRequestHandler(entryUrl % Page, ignoreErrors=(sGui is not False)).request()
 
     if not sJson:
-        if not sGui: oGui.showError('xStream', 'Fehler beim Laden der Daten.')
+        if not sGui: oGui.showError('streamon', 'Fehler beim Laden der Daten.')
         return
 
     aJson = json.loads(sJson)
 
     if not 'data' in aJson or len(aJson['data']) == 0:
-        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
     iPage = int(params.getValue('page'))
     if iPage <= 0:
@@ -137,7 +137,7 @@ def showSearchEntries(entryUrl=False, sGui=False):
     isMatch, aResult = cParser().parse(sHtmlContent, pattern)
 
     if not isMatch:
-        if not sGui: oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        if not sGui: oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     total = len(aResult)

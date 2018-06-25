@@ -73,7 +73,7 @@ class cCFScrape:
             response = opener.open(request)
         except urllib2.HTTPError as e:
             response = e
-	    
+			
         if response.code != 503:
             return response
 

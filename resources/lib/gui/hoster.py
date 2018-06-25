@@ -7,6 +7,7 @@ from resources.lib.player import cPlayer
 from resources.lib import logger
 import xbmc, xbmcgui, xbmcplugin
 
+
 class cHosterGui:
     SITE_NAME = 'cHosterGui'
 
@@ -59,8 +60,8 @@ class cHosterGui:
 
         # resolver response
         if link is not False:
-	    data = {'title': fileName, 'season': params.getValue('season'), 'episode': params.getValue('episode'),
-		    'showTitle': params.getValue('TVShowTitle'), 'thumb': params.getValue('thumb'), 'link': link}
+            data = {'title': fileName, 'season': params.getValue('season'), 'episode': params.getValue('episode'),
+                    'showTitle': params.getValue('TVShowTitle'), 'thumb': params.getValue('thumb'), 'link': link}
             return data
 
         return False
@@ -86,9 +87,9 @@ class cHosterGui:
             info['Episode'] = data['episode']
             info['Season'] = data['season']
             info['TVShowTitle'] = data['showTitle']
-	if 'foxx' in data['link']:
-	    list_item.setContentLookup(False)
-	    list_item.setMimeType('video/mp4')
+        if 'foxx' in data['link']:
+            list_item.setContentLookup(False)
+            list_item.setMimeType('video/mp4')
         list_item.setInfo(type="Video", infoLabels=info)
         list_item.setProperty('IsPlayable', 'true')
 
@@ -226,7 +227,7 @@ class cHosterGui:
             return
         # if result is not a list, make in one
         if not type(siteResult) is list:
-	    temp = [siteResult]
+            temp = [siteResult]
             siteResult = temp
         # field "name" marks hosters
         if 'name' in siteResult[0]:
@@ -267,7 +268,7 @@ class cHosterGui:
 
             # if result is not a list, make in one
             if not type(siteResult) is list:
-		temp = [siteResult]
+                temp = [siteResult]
                 siteResult = temp
 
         # choose part
@@ -312,7 +313,7 @@ class cHosterGui:
             return False
         # if result is not a list, make in one
         if not type(siteResult) is list:
-	    temp = [siteResult]
+            temp = [siteResult]
             siteResult = temp
         # field "name" marks hosters
         if 'name' in siteResult[0]:

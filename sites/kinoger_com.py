@@ -111,14 +111,14 @@ def showSeasons():
     isMatch, sHtmlContainer = cParser.parseSingleResult(sHtmlContent, pattern)
 
     if not isMatch:
-        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     pattern = "'([^\]]+)"
     isMatch, aResult = cParser.parse(sHtmlContainer, pattern)
 
     if not isMatch:
-        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     i = 0
@@ -148,7 +148,7 @@ def showEpisodes():
     isMatch, aResult = cParser.parse(sEpisodeNr, pattern)
 
     if not isMatch:
-        oGui.showInfo('xStream', 'Es wurde kein Eintrag gefunden')
+        oGui.showInfo('streamon', 'Es wurde kein Eintrag gefunden')
         return
 
     i = 0
